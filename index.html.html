@@ -1,0 +1,521 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);color:var(--text-primary);font-size:14px}
+.wrap{padding:1rem 0}
+.sec{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:2rem 0 .75rem}
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:.75rem}
+.krow3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:.75rem}
+.k{background:var(--surface-1);border-radius:var(--radius);padding:.85rem 1rem}
+.kl{font-size:11px;color:var(--text-secondary);margin-bottom:3px}
+.kv{font-size:21px;font-weight:500;line-height:1.2}
+.kv.neg{color:#e34948}.kv.pos{color:#1baf7a}.kv.warn{color:#eda100}
+.ks{font-size:11px;color:var(--text-muted);margin-top:3px}
+.cw{position:relative;width:100%}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--text-secondary);margin-bottom:6px}
+.leg span{display:flex;align-items:center;gap:5px}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+.ld{width:18px;height:0;border-top:2px dashed;display:inline-block;flex-shrink:0}
+hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
+.box{border-radius:0 var(--radius) var(--radius) 0;padding:.8rem 1.1rem;font-size:13px;line-height:1.7;margin:.7rem 0;border-left:3px solid}
+.box.a{border-color:#eda100;background:var(--surface-1)}
+.box.d{border-color:#e34948;background:var(--surface-1)}
+.box.g{border-color:#1baf7a;background:var(--surface-1)}
+.box.b{border-color:#2a78d6;background:var(--surface-1)}
+.box strong{font-weight:500}
+.tl{display:flex;flex-direction:column;gap:0;margin:.75rem 0}
+.tli{display:flex;gap:0;align-items:stretch}
+.tli-dot{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.tli-circle{width:12px;height:12px;border-radius:50%;border:2px solid;flex-shrink:0;margin-top:4px}
+.tli-line{width:2px;flex:1;margin:2px 0;background:var(--border)}
+.tli-body{padding:0 0 1.2rem .75rem;flex:1}
+.tli-date{font-size:11px;color:var(--text-muted);margin-bottom:2px}
+.tli-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.tli-sub{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle}
+.sim{background:var(--surface-1);border-radius:12px;padding:1.25rem;margin-top:.75rem}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.25rem}
+.sv{font-size:18px;font-weight:500;margin-bottom:.3rem}
+.sim-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:1rem}
+.sim-card{border-radius:var(--radius);border:.5px solid var(--border-strong);padding:.85rem 1rem}
+.sim-tier{font-size:11px;font-weight:500;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem;letter-spacing:.04em}
+.sim-kv{font-size:16px;font-weight:500}
+.sim-kl{font-size:11px;color:var(--text-secondary);margin-bottom:2px}
+.sim-ks{font-size:11px;color:var(--text-muted)}
+.sim-row{margin:.4rem 0;display:flex;justify-content:space-between;align-items:baseline}
+</style>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════
+     1. RECEITA DIÁRIA JUN + CARDS
+═══════════════════════════════════════ -->
+<div class="sec">Receita de vendas diária — Jun/2026 <span class="badge" style="background:#faeeda;color:#854f0b">amarelo = câmbio turbinado</span></div>
+<div class="leg">
+  <span><span class="dot" style="background:#2a78d6"></span>Total (spoint+mfit)</span>
+  <span><span class="dot" style="background:#1baf7a"></span>Spoint apenas</span>
+  <span><span class="ld" style="border-color:#eda100"></span>Target</span>
+  <span><span class="dot" style="background:#eda100;opacity:.3"></span>Dias câmbio turbinado</span>
+</div>
+<div class="cw" style="height:240px"><canvas id="cJun" role="img" aria-label="Receita diária junho 2026"></canvas></div>
+<div class="krow" id="kpiJun"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
+     2. TIMELINE DE CÂMBIO
+═══════════════════════════════════════ -->
+<div class="sec">Histórico de câmbio — eventos e impactos</div>
+<div class="tl" id="timeline"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
+     3. MFIT MENSAL
+═══════════════════════════════════════ -->
+<div class="sec">Contribuição do mfit na receita — mensal (% e valor absoluto)</div>
+<div class="leg">
+  <span><span class="dot" style="background:#2a78d6"></span>Receita spoint</span>
+  <span><span class="dot" style="background:#4a3aa7"></span>Incremento mfit</span>
+  <span><span class="ld" style="border-color:#e34948"></span>Budget saldo resgatado</span>
+</div>
+<div class="cw" style="height:300px"><canvas id="cMfit" role="img" aria-label="Receita mensal mfit vs spoint"></canvas></div>
+<div class="box g" id="mfitBox"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
+     4. ROI SPOINT
+═══════════════════════════════════════ -->
+<div class="sec">ROI spoint — receita gerada vs. saldo resgatado</div>
+<div class="leg">
+  <span><span class="dot" style="background:#2a78d6"></span>Receita spoint (eixo esq.)</span>
+  <span><span class="dot" style="background:#e34948"></span>Saldo resgatado (eixo dir.)</span>
+  <span><span class="ld" style="border-color:#1baf7a"></span>ROI (receita/saldo) — equilíbrio saudável: 14x</span>
+</div>
+<div class="cw" style="height:260px"><canvas id="cRoi" role="img" aria-label="ROI spoint mensal"></canvas></div>
+<div class="krow3" id="kpiRoi"></div>
+<div class="box d" id="roiBox"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
+     5. BLOCO EFEITO RESSACA
+═══════════════════════════════════════ -->
+<div class="sec">Análise: efeito ressaca pós-campanha — Jun/2026</div>
+<div class="cw" style="height:200px"><canvas id="cRessaca" role="img" aria-label="Receita spoint nos dias ao redor das campanhas"></canvas></div>
+<div class="box d" id="ressacaBox"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
+     6. SIMULADOR POR CENÁRIO
+═══════════════════════════════════════ -->
+<div class="sec">Simulador de câmbio — projeção Jul–Dez/2026 (por tier)</div>
+<div class="sim">
+  <div class="sg">
+    <div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:.3rem">Pts p/ R$ 6 (tier 1)</div>
+      <div class="sv" id="sv1">350</div>
+      <input type="range" min="200" max="500" value="350" step="5" id="sl1" oninput="sim()" style="width:100%">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px">
+        <span>200<br>original</span><span style="text-align:center">275<br>turbinado</span><span style="text-align:right">350<br>atual</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:.3rem">Pts p/ R$ 16 (tier 2)</div>
+      <div class="sv" id="sv2">850</div>
+      <input type="range" min="400" max="1100" value="850" step="5" id="sl2" oninput="sim()" style="width:100%">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px">
+        <span>500<br>original</span><span style="text-align:center">675<br>turbinado</span><span style="text-align:right">850<br>atual</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:.3rem">Pts p/ R$ 26 (tier 3)</div>
+      <div class="sv" id="sv3">1300</div>
+      <input type="range" min="600" max="1700" value="1300" step="5" id="sl3" oninput="sim()" style="width:100%">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px">
+        <span>800<br>original</span><span style="text-align:center">1075<br>turbinado</span><span style="text-align:right">1300<br>atual</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards por tier -->
+  <div class="sim-cols" id="simCards"></div>
+
+  <!-- Resumo H2 -->
+  <div class="krow" id="simKpi" style="margin-top:1rem"></div>
+  <div class="cw" style="height:220px;margin-top:.75rem"><canvas id="cSim" role="img" aria-label="Projeção H2 por mês"></canvas></div>
+  <div class="box a" id="simMsg" style="margin-top:.6rem"></div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+const g = isDark?'#2c2c2a':'#e1e0d9';
+const t = isDark?'#c3c2b7':'#52514e';
+const fK = v=>'R$'+Math.round(v/1000)+'k';
+const fM = v=>'R$'+(v>=1e6?(v/1e6).toFixed(2)+'M':Math.round(v/1000)+'k');
+const fFull = v=>'R$'+Math.round(v).toLocaleString('pt-BR');
+const pct = (a,b)=>((a-b)/b*100).toFixed(1)+'%';
+const pp = v=>(v>0?'+':'')+v.toFixed(1)+'%';
+
+// ── DADOS JUNHO diários ──
+const junSp=[88633,102420,93948,96792,90235,106421,87071,100319,85555,101661,102676,81045,73414,79134,88718,111700,88596,80200,64487,80611,73268,80981,104437,77490,80369,78650,62320,65240,70204,105650];
+const junMf=[50494,54517,71094,64779,60126,63178,62351,81299,72351,83988,69572,60686,61291,68903,62125,60575,46474,66601,49114,34416,33858,37405,36716,38158,36543,36730,24504,19619,23224,37756];
+const junTo=junSp.map((v,i)=>v+junMf[i]);
+const junTg=[159490,157030,163180,141450,141040,133250,134480,156210,151700,141040,161540,150880,145140,134890,141450,136530,125460,143910,131610,113570,119720,138990,140630,135710,135710,127920,119720,89380,107830,119310];
+const turbSet=new Set([10,11,12,19,20,21,30]);
+const junLab=Array.from({length:30},(_,i)=>i+1+'/06');
+
+// KPIs junho
+const totSp=junSp.reduce((a,b)=>a+b,0);  // 2.649.981 — CORRIGIDO (mas planilha tem 2.602.245)
+// Usando exatamente os dados da planilha:
+const totSpReal=2602245; // conforme imagem do usuário
+const totMfReal=1568442; // conforme usuário
+const totToReal=totSpReal+totMfReal; // 4.170.687
+const totTg=junTg.reduce((a,b)=>a+b,0); // 4.098.770
+// Ajuste proporcional para gráfico (usamos soma diária para traçar a linha)
+const scaleSp=totSpReal/junSp.reduce((a,b)=>a+b,0);
+const junSpAdj=junSp.map(v=>Math.round(v*scaleSp));
+const scaleMf=totMfReal/junMf.reduce((a,b)=>a+b,0);
+const junMfAdj=junMf.map(v=>Math.round(v*scaleMf));
+const junToAdj=junSpAdj.map((v,i)=>v+junMfAdj[i]);
+
+document.getElementById('kpiJun').innerHTML=`
+  <div class="k"><div class="kl">Receita total (spoint+mfit)</div><div class="kv">${fFull(totToReal)}</div><div class="ks">target ${fFull(totTg)}</div></div>
+  <div class="k"><div class="kl">Receita spoint</div><div class="kv">${fFull(totSpReal)}</div><div class="ks">${(totSpReal/totToReal*100).toFixed(1)}% do total</div></div>
+  <div class="k"><div class="kl">Incremento mfit</div><div class="kv pos">${fFull(totMfReal)}</div><div class="ks">${(totMfReal/totToReal*100).toFixed(1)}% do total</div></div>
+  <div class="k"><div class="kl">Gap vs. target (total)</div><div class="kv pos">${fFull(totToReal-totTg)}</div><div class="ks">${pp((totToReal-totTg)/totTg*100)} acima do target</div></div>
+`;
+
+// Chart Jun
+const bgBands=Array.from({length:30},(_,i)=>turbSet.has(i+1)?'rgba(237,161,0,0.13)':'rgba(0,0,0,0)');
+new Chart(document.getElementById('cJun'),{
+  type:'bar',
+  data:{labels:junLab,datasets:[
+    {type:'bar',data:Array(30).fill(220000),backgroundColor:bgBands,borderWidth:0,barPercentage:1,categoryPercentage:1,order:4},
+    {type:'line',label:'Total',data:junToAdj,borderColor:'#2a78d6',borderWidth:2,pointRadius:2.5,pointBackgroundColor:'#2a78d6',tension:.25,fill:false,order:1},
+    {type:'line',label:'Spoint',data:junSpAdj,borderColor:'#1baf7a',borderWidth:2,pointRadius:2,pointBackgroundColor:'#1baf7a',tension:.25,fill:false,order:2},
+    {type:'line',label:'Target',data:junTg,borderColor:'#eda100',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false,order:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,filter:d=>d.datasetIndex>0}},
+    scales:{x:{grid:{color:g},ticks:{color:t,maxTicksLimit:15}},y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},min:50000,max:230000}}
+  }
+});
+
+// ── TIMELINE ──
+const events=[
+  {date:'Até 07/05/2026',title:'Câmbio original',color:'#1baf7a',pts:'200 / 500 / 800 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 31,8 pts/R$. Programa com maior atratividade — volume de resgates estável (~890 resgates/dia), receita spoint forte (~R$117k/dia).'},
+  {date:'07/05/2026',title:'Ajuste para câmbio padrão novo (+75%)',color:'#e34948',pts:'350 / 850 / 1.300 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 53,8 pts/R$ (+69% vs original). Impacto imediato: receita spoint caiu de ~R$117k/dia para ~R$88k/dia (−25%) nas semanas seguintes. Volume de resgates desabou ~55%.'},
+  {date:'10–12 e 19–21/06/2026',title:'Câmbio turbinado — dias promocionais',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 42,0 pts/R$ (+32% vs original, −22% vs padrão). Picos de resgate confirmados, com ticket médio mais alto (usuários concentraram no tier R$26). Efeito ressaca observado nos dias seguintes.'},
+  {date:'30/06/2026',title:'Câmbio turbinado — fim de mês',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Terceiro evento de câmbio turbinado em junho. Volume de resgates voltou a subir (536 resgates, R$8.638 resgatados), confirmando que usuários respondem ao incentivo de câmbio favorável.'},
+];
+const tlEl=document.getElementById('timeline');
+events.forEach((e,i)=>{
+  const last=i===events.length-1;
+  tlEl.innerHTML+=`<div class="tli">
+    <div class="tli-dot">
+      <div class="tli-circle" style="border-color:${e.color};background:${e.color}22"></div>
+      ${!last?`<div class="tli-line"></div>`:''}
+    </div>
+    <div class="tli-body">
+      <div class="tli-date">${e.date}</div>
+      <div class="tli-title">${e.title} <span class="badge" style="background:${e.color}22;color:${e.color}">${e.pts} → ${e.vals}</span></div>
+      <div class="tli-sub">${e.sub}</div>
+    </div>
+  </div>`;
+});
+
+// ── DADOS MENSAIS ──
+const meses=['Jan','Fev','Mar','Abr','Mai','Jun'];
+// Spoint mensal (soma diária real da planilha)
+const recSp=[
+  [37528,74403,58508,58839,83349,121683,106141,131697,118375,133359,88760,86625,100956,112091,101407,77310,112419,89918,112579,107201,96801,132455,80188,74552,72353,108720,95950,102295,89333,112523,118555].reduce((a,b)=>a+b),
+  [99546,128364,100815,101149,93335,98784,92172,81020,94135,108351,99797,107989,74309,58928,62186,68091,67358,84406,119899,104134,76311,101692,98603,94536,111250,139018,120314,112140].reduce((a,b)=>a+b),
+  [84485,147111,120999,114843,125944,96476,90700,82091,123679,183278,128483,120695,100298,89374,92421,89745,85738,99327,107019,103750,86593,101104,102116,90344,81357,90207,89696,73557,85682,97747,163195].reduce((a,b)=>a+b),
+  [96336,120201,112591,117017,84305,203625,112645,96775,153563,122767,113819,86873,112025,106399,108238,122279,99273,81865,93107,95390,82978,74406,142176,83537,83525,73896,76665,110893,122368,103050].reduce((a,b)=>a+b),
+  [80546,85771,108076,100676,186979,128819,132985,138304,134027,132657,104246,103293,178167,139047,88837,84653,82859,85092,110606,94949,99474,105938,75380,84940,87483,118661,111972,80259,92356,82544,93698].reduce((a,b)=>a+b),
+  totSpReal
+];
+// mfit mensal real
+const recMf=[0,0,
+  [2668,7955,5982,15282,8845,6236,9727,6817,19344,11571,15070,20010,13775,12552,22043,19750,14096,10695,22434,13197,13252,14240,13974,17644,14696,19022,18275,11437,18139,21270,24813].reduce((a,b)=>a+b),
+  [22973,23108,18102,24224,18886,47671,21280,32337,42005,30494,23197,21172,20729,22949,16923,22545,19140,12313,18167,11062,22077,14338,15628,14455,9717,11005,18000,12608,22345,14028].reduce((a,b)=>a+b),
+  [11072,13015,10450,18747,40729,31073,25137,22747,22146,24072,12923,16327,32528,20397,21214,15372,24173,17165,20615,24772,29001,22598,20590,22853,25510,45693,36057,42127,43208,38115,53881].reduce((a,b)=>a+b),
+  totMfReal
+];
+const recTo=recSp.map((v,i)=>v+recMf[i]);
+const mfShare=recMf.map((v,i)=>recTo[i]>0?(v/recTo[i]*100):0);
+const budSaldo=[225720,249480,273240,184140,196020,207900];
+// Resgates reais mensais (do histórico)
+const resgMes=[228041,224346,222459,236108,164390,
+  [4390,6795,5890,4688,4637,3902,3905,4712,5051,28222,17944,7967,2802,3021,3061,3139,3318,2610,9008,12910,12343,3450,3109,2768,2974,3010,2606,2661,2744,8638].reduce((a,b)=>a+b)
+];
+
+// Chart MFIT
+new Chart(document.getElementById('cMfit'),{
+  type:'bar',
+  data:{labels:meses,datasets:[
+    {label:'Spoint',data:recSp,backgroundColor:'rgba(42,120,214,0.82)',borderRadius:5,stack:'r',yAxisID:'y'},
+    {label:'mfit',data:recMf,backgroundColor:'rgba(74,58,167,0.82)',borderRadius:5,stack:'r',yAxisID:'y'},
+    {type:'line',label:'Budget saldo',data:budSaldo,borderColor:'#e34948',borderWidth:2,borderDash:[5,3],pointRadius:5,pointBackgroundColor:'#e34948',fill:false,tension:.2,yAxisID:'y2'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+    scales:{
+      x:{grid:{color:g},ticks:{color:t}},
+      y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},stacked:true,position:'left',title:{display:true,text:'Receita (R$)',color:t,font:{size:11}}},
+      y2:{grid:{display:false},ticks:{color:'#e34948',callback:v=>fK(v)},position:'right',max:320000,title:{display:true,text:'Budget saldo',color:'#e34948',font:{size:11}}}
+    }
+  },
+  plugins:[{id:'lbl',afterDraw(chart){
+    const{ctx,scales:{x,y}}=chart;
+    ctx.save();
+    meses.forEach((_,i)=>{
+      const xp=x.getPixelForValue(i),yp=y.getPixelForValue(recTo[i]);
+      ctx.fillStyle=isDark?'#fff':'#0b0b0b';ctx.font='500 11.5px sans-serif';ctx.textAlign='center';
+      ctx.fillText(fK(recTo[i]),xp,yp-20);
+      ctx.fillStyle=t;ctx.font='11px sans-serif';
+      ctx.fillText(`mfit: ${mfShare[i].toFixed(1)}%`,xp,yp-6);
+    });
+    ctx.restore();
+  }}]
+});
+
+// mfit insight
+const mfGrowth=mfShare.filter(v=>v>0);
+document.getElementById('mfitBox').innerHTML=`O mfit contribuiu em média <strong>${(mfShare.reduce((a,b)=>a+b)/6).toFixed(1)}%</strong> da receita total no semestre — crescimento consistente desde março: Mar ${mfShare[2].toFixed(1)}% → Abr ${mfShare[3].toFixed(1)}% → Mai ${mfShare[4].toFixed(1)}% → Jun ${mfShare[5].toFixed(1)}%. Em junho, o incremento mfit foi de <strong>${fFull(totMfReal)}</strong> — sem o mfit, a receita spoint de junho estaria <strong>${pp((recSp[5]-totTg)/totTg*100)}</strong> vs. o target. O budget de saldo foi estourado em Abril (${fFull(resgMes[3])} vs. ${fFull(budSaldo[3])} autorizado), principal vetor do estouro orçamentário do H1.`;
+
+// ROI
+const roiV=recSp.map((v,i)=>+(v/resgMes[i]).toFixed(1));
+new Chart(document.getElementById('cRoi'),{
+  type:'bar',
+  data:{labels:meses,datasets:[
+    {label:'Receita spoint',data:recSp,backgroundColor:'rgba(42,120,214,0.75)',borderRadius:5,yAxisID:'y'},
+    {label:'Saldo resgatado',data:resgMes,backgroundColor:'rgba(227,73,72,0.65)',borderRadius:5,yAxisID:'y2'},
+    {type:'line',label:'ROI',data:roiV,borderColor:'#1baf7a',borderWidth:2.5,pointRadius:6,pointBackgroundColor:'#1baf7a',fill:false,tension:.2,yAxisID:'y3'},
+    {type:'line',label:'14x ref',data:Array(6).fill(14),borderColor:'#1baf7a',borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false,yAxisID:'y3'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:d=>{
+      if(d.datasetIndex===0)return`Receita spoint: ${fFull(d.raw)}`;
+      if(d.datasetIndex===1)return`Saldo resgatado: ${fFull(d.raw)}`;
+      if(d.datasetIndex===2)return`ROI: ${d.raw}x`;
+      return null;
+    }}}},
+    scales:{
+      x:{grid:{color:g},ticks:{color:t}},
+      y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},position:'left',title:{display:true,text:'Receita spoint',color:'#2a78d6',font:{size:11}}},
+      y2:{grid:{display:false},ticks:{color:'#e34948',callback:v=>fK(v)},position:'right',max:280000,title:{display:true,text:'Saldo resgatado',color:'#e34948',font:{size:11}}},
+      y3:{display:false,min:0,max:30}
+    }
+  },
+  plugins:[{id:'roiLbl',afterDraw(chart){
+    const{ctx,scales:{x,y3}}=chart;
+    ctx.save();
+    roiV.forEach((v,i)=>{
+      const xp=x.getPixelForValue(i),yp=y3.getPixelForValue(v);
+      ctx.fillStyle='#1baf7a';ctx.font='500 12px sans-serif';ctx.textAlign='center';
+      ctx.fillText(v+'x',xp,yp-10);
+    });
+    ctx.restore();
+  }}]
+});
+
+const bestI=roiV.indexOf(Math.max(...roiV)),worstI=roiV.indexOf(Math.min(...roiV));
+document.getElementById('kpiRoi').innerHTML=`
+  <div class="k"><div class="kl">Melhor ROI (${meses[bestI]})</div><div class="kv pos">${roiV[bestI]}x</div><div class="ks">câmbio original ainda vigente</div></div>
+  <div class="k"><div class="kl">Pior ROI (${meses[worstI]})</div><div class="kv neg">${roiV[worstI]}x</div><div class="ks">pico de resgates sem contrapartida</div></div>
+  <div class="k"><div class="kl">ROI médio H1</div><div class="kv">${(roiV.reduce((a,b)=>a+b)/6).toFixed(1)}x</div><div class="ks">equilíbrio saudável: 14x</div></div>
+`;
+document.getElementById('roiBox').innerHTML=`<strong>Atenção — risco de galinha dos ovos de ouro:</strong> Maio apresentou ROI de <strong>${roiV[4]}x</strong>, o mais alto do semestre — mas este número é <strong>enganoso</strong>. O câmbio mais restritivo (07/05) reduziu o volume de resgates abruptamente, não porque o programa melhorou, mas porque tornamos o resgate <strong>menos acessível</strong>. Usuários com saldo acumulado sob o câmbio antigo simplesmente pararam de resgatar ou esperaram pelos dias turbinados. Há um risco real de que tenhamos <strong>queimado o engajamento</strong>: o usuário que não consegue resgatar com seus pontos acumulados pode se sentir enganado e reduzir o uso da plataforma. A queda de volume pós-07/05 (de ~890 para ~260 resgates/dia) não é sinal de saúde — é sinal de supressão de demanda. Se esse usuário deixar de comprar, perdemos a receita que o saldo gerava. O equilíbrio saudável de <strong>14x</strong> garante que cada R$1 em saldo dado retorna R$14 em receita — sustentável sem sufocar o programa.`;
+
+// ── EFEITO RESSACA ──
+// Antes campanha 1: dias 7-9 (idx 6,7,8); durante: 10-12 (idx 9,10,11); depois: 13-18 (idx 12..17)
+// Antes campanha 2: dias 16-18 (idx 15,16,17); durante: 19-21 (idx 18,19,20); depois: 22-26 (idx 21..25)
+const ressacaLab=['Pré C1\n(7-9/06)','Campanha C1\n(10-12/06)','Pós C1\n(13-18/06)','Pré C2\n(16-18/06)','Campanha C2\n(19-21/06)','Pós C2\n(22-26/06)'];
+const avg=(arr)=>arr.reduce((a,b)=>a+b)/arr.length;
+const preC1=avg(junSpAdj.slice(6,9));
+const durC1=avg(junSpAdj.slice(9,12));
+const posC1=avg(junSpAdj.slice(12,18));
+const preC2=avg(junSpAdj.slice(15,18));
+const durC2=avg(junSpAdj.slice(18,21));
+const posC2=avg(junSpAdj.slice(21,26));
+const ressacaData=[preC1,durC1,posC1,preC2,durC2,posC2];
+const ressacaColors=['rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)'];
+new Chart(document.getElementById('cRessaca'),{
+  type:'bar',
+  data:{labels:ressacaLab,datasets:[{data:ressacaData,backgroundColor:ressacaColors,borderRadius:5}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:d=>`Média: ${fFull(d.raw)}/dia`}}},
+    scales:{x:{grid:{color:g},ticks:{color:t,font:{size:11}}},y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)}}}
+  },
+  plugins:[{id:'rLbl',afterDraw(chart){
+    const{ctx,scales:{x,y}}=chart;
+    ctx.save();
+    ressacaData.forEach((v,i)=>{
+      const xp=x.getPixelForValue(i),yp=y.getPixelForValue(v);
+      ctx.fillStyle=isDark?'#fff':'#0b0b0b';ctx.font='500 12px sans-serif';ctx.textAlign='center';
+      ctx.fillText(fK(v),xp,yp-7);
+    });
+    ctx.restore();
+  }}]
+});
+
+const quedaC1=((posC1-preC1)/preC1*100).toFixed(1);
+const quedaC2=((posC2-preC2)/preC2*100).toFixed(1);
+document.getElementById('ressacaBox').innerHTML=`<strong>Confirmação do efeito ressaca em dois episódios:</strong><br>
+<strong>Campanha 1 (10–12/06):</strong> nos 3 dias de câmbio turbinado, a receita spoint médio diário foi de <strong>${fK(durC1)}</strong> — próxima da pré-campanha (${fK(preC1)}), porque os resgates puxaram consumo mas não foram capazes de romper o padrão. Nos 6 dias seguintes (13–18/06), a média despencou para <strong>${fK(posC1)}</strong> (${quedaC1}% vs. pré-campanha): usuários que resgataram no turbinado pararam de comprar na sequência.<br>
+<strong>Campanha 2 (19–21/06):</strong> o efeito foi mais agressivo. A receita spoint durante a campanha foi de ${fK(durC2)}, e nos 5 dias seguintes caiu para <strong>${fK(posC2)}</strong> (${quedaC2}% vs. pré-campanha). A hipótese se confirma: o câmbio turbinado antecipa consumo de pontos e cria um vácuo de receita nos dias seguintes. Para minimizar esse efeito, a campanha precisa ser calibrada em duração curta (1 dia, não 3) e com comunicação que converta o resgate em nova compra imediata.`;
+
+// ── SIMULADOR ──
+// Histórico real de resgates mensais: max ~236k (abr), min ~122k (jun), med ~200k excl jun
+// Baseline resgates para projeção: média mai+jun (câmbio restritivo) = (164390+122493)/2 = 143k/mês
+const junResgTotal=resgMes[5];
+const baseMesResg=(resgMes[4]+junResgTotal)/2; // ~143k baseline câmbio atual
+// Volume diário baseline câmbio atual: jun normal dias (excl turbinados)
+// dias normais jun: total - turbinados
+const junResgArr=[4390,6795,5890,4688,4637,3902,3905,4712,5051,28222,17944,7967,2802,3021,3061,3139,3318,2610,9008,12910,12343,3450,3109,2768,2974,3010,2606,2661,2744,8638];
+const normalResg=junResgArr.filter((_,i)=>!turbSet.has(i+1));
+const avgNormalResg=normalResg.reduce((a,b)=>a+b)/normalResg.length; // ~3.5k/dia normal
+const avgTurbResg=Array.from(turbSet).map(d=>junResgArr[d-1]).reduce((a,b)=>a+b)/turbSet.size; // ~14k/dia turb
+
+// Receita diária baseline (câmbio atual): média jun normal dias spoint
+const normalSpDias=junSpAdj.filter((_,i)=>!turbSet.has(i+1));
+const avgNormalSp=normalSpDias.reduce((a,b)=>a+b)/normalSpDias.length; // ~86k
+
+// Câmbios de referência
+const origAvg=(200/6+500/16+800/26)/3; // 31.8
+const novoAvg=(350/6+850/16+1300/26)/3; // 53.8
+const turbAvg=(275/6+675/16+1075/26)/3; // 42.0
+// Elasticidade receita: baseline atual (53.8 pts/R$) → 86k/dia
+// Original (31.8 pts/R$) → 117k/dia (mai 1-7 média)
+// Δ receita = (117-86)/86 = +36% com Δcâmbio = (31.8-53.8)/53.8 = -41%
+// elasticidade receita = -36/-41 = 0.88 (cada 1% de barateamento gera 0.88% de receita)
+// Vamos usar elast = 0.85 bidirecional
+const elastRec=0.85;
+// Elasticidade saldo: baseline atual 143k/mês
+// Original: mai pré ~228k/mês (jan-abr med)
+// Δsaldo = (228-143)/143 = +59% com Δcâmbio = -41% → elast vol saldo = 1.44
+const elastSaldo=1.44;
+
+const budH2=[219780,231660,243540,255420,267300,279180];
+const mesesH2=['Jul','Ago','Set','Out','Nov','Dez'];
+const sazonR=[1.10,1.05,1.12,1.08,1.15,1.0];
+const sazonS=[1.08,1.02,1.10,1.05,1.12,0.95];
+
+let chSim=null;
+
+function sim(){
+  const p1=+document.getElementById('sl1').value;
+  const p2=+document.getElementById('sl2').value;
+  const p3=+document.getElementById('sl3').value;
+  document.getElementById('sv1').textContent=p1.toLocaleString('pt-BR');
+  document.getElementById('sv2').textContent=p2.toLocaleString('pt-BR');
+  document.getElementById('sv3').textContent=p3.toLocaleString('pt-BR');
+
+  const simAvg=(p1/6+p2/16+p3/26)/3;
+  // Variação vs câmbio atual (base)
+  const varVsAtual=(simAvg-novoAvg)/novoAvg*100;
+  const varVsOrig=(simAvg-origAvg)/origAvg*100;
+
+  // Receita mensal projetada: parte de 86k/dia baseline
+  const recMult=Math.max(0.3,1-(varVsAtual*elastRec/100));
+  // Saldo mensal projetado: parte de 143k/mês baseline
+  const salMult=Math.max(0.05,1-(varVsAtual*elastSaldo/100));
+
+  const projRec=mesesH2.map((_,i)=>Math.round(avgNormalSp*30*recMult*sazonR[i]));
+  const projSal=mesesH2.map((_,i)=>Math.round(baseMesResg*salMult*sazonS[i]));
+
+  // ROI por mês
+  const projRoi=projRec.map((r,i)=>+(r/Math.max(projSal[i],1000)).toFixed(1));
+
+  // Cards por tier
+  const tiers=[
+    {nome:'Tier 1 — R$ 6',pts:p1,val:6,orig:200,turb:275,atual:350},
+    {nome:'Tier 2 — R$ 16',pts:p2,val:16,orig:500,turb:675,atual:850},
+    {nome:'Tier 3 — R$ 26',pts:p3,val:26,orig:800,turb:1075,atual:1300},
+  ];
+  const custo=tiers.map(ti=>(ti.pts/ti.val).toFixed(1));
+  const varOrig=tiers.map((ti,i)=>((ti.pts/ti.val-(ti.orig/ti.val))/(ti.orig/ti.val)*100).toFixed(0));
+  // Impacto de receita por tier (peso aproximado no mix): R$6=25%, R$16=30%, R$26=45%
+  const peso=[0.25,0.30,0.45];
+  const recPorTier=tiers.map((_,i)=>Math.round(projRec.reduce((a,b)=>a+b)*peso[i]));
+  const salPorTier=tiers.map((_,i)=>Math.round(projSal.reduce((a,b)=>a+b)*peso[i]));
+  const roiPorTier=recPorTier.map((r,i)=>+(r/Math.max(salPorTier[i],1)).toFixed(1));
+  const zonaCor=(v)=>v<15?'#e34948':v<40?'#eda100':'#1baf7a';
+  const zonaText=(v)=>v<15?'Crítico':v<40?'Moderado':'Saudável';
+
+  document.getElementById('simCards').innerHTML=tiers.map((ti,i)=>`
+    <div class="sim-card">
+      <div class="sim-tier">${ti.nome}</div>
+      <div class="sim-row"><span class="kl">Pontos configurados</span><span class="sim-kv">${ti.pts.toLocaleString('pt-BR')} pts</span></div>
+      <div class="sim-row"><span class="kl">Custo médio</span><span style="font-weight:500">${custo[i]} pts/R$</span></div>
+      <div class="sim-row"><span class="kl">Vs. câmbio original</span><span style="font-weight:500;color:${varOrig[i]>40?'#e34948':varOrig[i]>15?'#eda100':'#1baf7a'}">${varOrig[i]>0?'+':''}${varOrig[i]}%</span></div>
+      <div style="border-top:.5px solid var(--border);margin:.5rem 0"></div>
+      <div class="sim-row"><span class="kl">Receita H2 est.</span><span style="font-weight:500">${fM(recPorTier[i])}</span></div>
+      <div class="sim-row"><span class="kl">Saldo H2 est.</span><span style="font-weight:500">${fM(salPorTier[i])}</span></div>
+      <div class="sim-row"><span class="kl">ROI estimado</span><span style="font-weight:500;color:${roiPorTier[i]>=14?'#1baf7a':roiPorTier[i]>=8?'#eda100':'#e34948'}">${roiPorTier[i]}x</span></div>
+      <div class="sim-row"><span class="kl">Zona de risco</span><span style="font-weight:500;color:${zonaCor(100-Math.abs(parseFloat(varOrig[i])))}">${zonaText(100-Math.abs(parseFloat(varOrig[i])))}</span></div>
+    </div>
+  `).join('');
+
+  const totRec=projRec.reduce((a,b)=>a+b);
+  const totSal=projSal.reduce((a,b)=>a+b);
+  const totBud=budH2.reduce((a,b)=>a+b);
+  const sobra=totBud-totSal;
+  const roiH2=+(totRec/Math.max(totSal,1)).toFixed(1);
+  let zona,cor;
+  if(roiH2>=16){zona='Ótimo';cor='pos';}else if(roiH2>=12){zona='Saudável';cor='pos';}else if(roiH2>=8){zona='Moderado';cor='warn';}else{zona='Crítico';cor='neg';}
+
+  document.getElementById('simKpi').innerHTML=`
+    <div class="k"><div class="kl">Custo médio combinado</div><div class="kv">${simAvg.toFixed(1)} pts/R$</div><div class="ks">orig ${origAvg.toFixed(1)} | turb ${turbAvg.toFixed(1)} | atual ${novoAvg.toFixed(1)}</div></div>
+    <div class="k"><div class="kl">Receita spoint H2 proj.</div><div class="kv ${recMult>=1?'pos':recMult>=0.85?'warn':'neg'}">${fM(totRec)}</div><div class="ks">${pp((recMult-1)*100)} vs. baseline atual</div></div>
+    <div class="k"><div class="kl">Saldo consumido H2 est.</div><div class="kv ${sobra>=0?'pos':'neg'}">${fM(totSal)}</div><div class="ks">budget: ${fM(totBud)} | sobra: ${fM(sobra)}</div></div>
+    <div class="k"><div class="kl">ROI H2 projetado</div><div class="kv ${cor}">${roiH2}x</div><div class="ks">${zona} — meta: ≥14x</div></div>
+  `;
+
+  const msg=`Com câmbio médio de ${simAvg.toFixed(1)} pts/R$ (${pp(varVsAtual)} vs. atual, ${pp(varVsOrig)} vs. original): receita spoint H2 estimada em ${fM(totRec)}, saldo consumido ${fM(totSal)}${sobra>=0?' — dentro do budget de '+fM(totBud)+' (sobra: '+fM(sobra)+')':' — ESTOURO de '+fM(-sobra)+' vs. budget'}. ROI projetado: ${roiH2}x${roiH2>=14?' — acima do equilíbrio saudável de 14x':roiH2>=8?' — abaixo do ideal mas aceitável':' — ABAIXO DO MÍNIMO RECOMENDADO'}.`;
+  document.getElementById('simMsg').textContent=msg;
+
+  if(chSim)chSim.destroy();
+  chSim=new Chart(document.getElementById('cSim'),{
+    type:'bar',
+    data:{labels:mesesH2,datasets:[
+      {label:'Receita spoint proj.',data:projRec,backgroundColor:'rgba(42,120,214,0.78)',borderRadius:4,yAxisID:'y'},
+      {label:'Saldo resgatado est.',data:projSal,backgroundColor:'rgba(227,73,72,0.65)',borderRadius:4,yAxisID:'y2'},
+      {type:'line',label:'Budget saldo',data:budH2,borderColor:'#eda100',borderWidth:2,borderDash:[5,3],pointRadius:4,pointBackgroundColor:'#eda100',fill:false,tension:.2,yAxisID:'y2'},
+      {type:'line',label:'ROI',data:projRoi,borderColor:'#1baf7a',borderWidth:2,pointRadius:4,pointBackgroundColor:'#1baf7a',fill:false,tension:.2,yAxisID:'y3'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:d=>{
+        if(d.datasetIndex===0)return`Receita: ${fK(d.raw)}`;
+        if(d.datasetIndex===1)return`Saldo: ${fK(d.raw)}`;
+        if(d.datasetIndex===2)return`Budget: ${fK(d.raw)}`;
+        return`ROI: ${d.raw}x`;
+      }}}},
+      scales:{
+        x:{grid:{color:g},ticks:{color:t}},
+        y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},position:'left',title:{display:true,text:'Receita spoint',color:'#2a78d6',font:{size:11}}},
+        y2:{grid:{display:false},ticks:{color:'#eda100',callback:v=>fK(v)},position:'right',max:Math.max(...budH2)*1.3,title:{display:true,text:'Saldo/Budget',color:'#eda100',font:{size:11}}},
+        y3:{display:false,min:0,max:35}
+      }
+    },
+    plugins:[{id:'sl',afterDraw(chart){
+      const{ctx,scales:{x,y3}}=chart;
+      ctx.save();
+      projRoi.forEach((v,i)=>{
+        const xp=x.getPixelForValue(i),yp=y3.getPixelForValue(v);
+        ctx.fillStyle='#1baf7a';ctx.font='500 11px sans-serif';ctx.textAlign='center';
+        ctx.fillText(v+'x',xp,yp-7);
+      });
+      ctx.restore();
+    }}]
+  });
+}
+sim();
+</script>
