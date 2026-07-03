@@ -48,6 +48,28 @@ hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
 <div class="wrap">
 
 <!-- ═══════════════════════════════════════
+     0. HISTÓRICO JAN–JUN (DIÁRIO/SEMANAL)
+═══════════════════════════════════════ -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin:2rem 0 .75rem">
+  <div class="sec" style="margin:0">Receita de vendas — visão histórica Jan–Jun/2026 <span class="badge" style="background:#fde8e8;color:#b91c1c">linha vermelha = câmbio ajustado em 07/05</span></div>
+  <div style="display:flex;gap:0;border:.5px solid var(--border-strong);border-radius:6px;overflow:hidden;flex-shrink:0;margin-left:12px">
+    <button id="btnDia" onclick="setHistView('dia')" style="padding:4px 14px;font-size:11px;font-weight:500;border:none;cursor:pointer;background:#2a78d6;color:#fff;transition:background .15s">Diário</button>
+    <button id="btnSem" onclick="setHistView('sem')" style="padding:4px 14px;font-size:11px;font-weight:500;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);transition:background .15s">Semanal</button>
+  </div>
+</div>
+<div class="leg">
+  <span><span class="dot" style="background:#2a78d6"></span>Total (spoint+mfit)</span>
+  <span><span class="dot" style="background:#1baf7a"></span>Spoint apenas</span>
+  <span><span class="ld" style="border-color:#eda100"></span>Target</span>
+  <span><span class="dot" style="background:#a855f7"></span>Resgates (qtd. — eixo dir.)</span>
+</div>
+<div class="cw" style="height:260px"><canvas id="cHist" role="img" aria-label="Histórico Jan–Jun 2026"></canvas></div>
+<div class="krow" id="kpiHist"></div>
+<div class="box b" id="histBox"></div>
+
+<hr class="d">
+
+<!-- ═══════════════════════════════════════
      1. RECEITA DIÁRIA JUN + CARDS
 ═══════════════════════════════════════ -->
 <div class="sec">Receita de vendas diária — Jun/2026 <span class="badge" style="background:#faeeda;color:#854f0b">amarelo = câmbio turbinado</span></div>
@@ -56,6 +78,7 @@ hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
   <span><span class="dot" style="background:#1baf7a"></span>Spoint apenas</span>
   <span><span class="ld" style="border-color:#eda100"></span>Target</span>
   <span><span class="dot" style="background:#eda100;opacity:.3"></span>Dias câmbio turbinado</span>
+  <span><span class="dot" style="background:#a855f7"></span>Resgates (qtd. — eixo dir.)</span>
 </div>
 <div class="cw" style="height:240px"><canvas id="cJun" role="img" aria-label="Receita diária junho 2026"></canvas></div>
 <div class="krow" id="kpiJun"></div>
@@ -77,7 +100,8 @@ hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
 <div class="leg">
   <span><span class="dot" style="background:#2a78d6"></span>Receita spoint</span>
   <span><span class="dot" style="background:#4a3aa7"></span>Incremento mfit</span>
-  <span><span class="ld" style="border-color:#e34948"></span>Budget saldo resgatado</span>
+  <span><span class="dot" style="background:#e34948;border-radius:50%"></span>Saldo consumido real</span>
+  <span><span class="ld" style="border-color:#e34948"></span>Budget saldo autorizado</span>
 </div>
 <div class="cw" style="height:300px"><canvas id="cMfit" role="img" aria-label="Receita mensal mfit vs spoint"></canvas></div>
 <div class="box g" id="mfitBox"></div>
@@ -162,27 +186,189 @@ const fFull = v=>'R$'+Math.round(v).toLocaleString('pt-BR');
 const pct = (a,b)=>((a-b)/b*100).toFixed(1)+'%';
 const pp = v=>(v>0?'+':'')+v.toFixed(1)+'%';
 
+// ── DADOS HISTÓRICOS DIÁRIOS Jan–Jun ──
+const histDados=[
+  // [data_iso, target, spoint, mfit]
+  ['2026-01-01',39308,37528,0],['2026-01-02',91390,74403,0],['2026-01-03',91063,58508,0],['2026-01-04',89425,58839,0],['2026-01-05',108799,83349,0],['2026-01-06',110303,121683,0],['2026-01-07',108096,106141,0],['2026-01-08',114647,131697,0],['2026-01-09',109734,118375,0],['2026-01-10',103709,133359,0],['2026-01-11',103709,88760,0],['2026-01-12',125054,86625,0],['2026-01-13',127005,100956,0],['2026-01-14',121994,112091,0],['2026-01-15',113242,101407,0],['2026-01-16',101872,77310,0],['2026-01-17',97614,112419,0],['2026-01-18',101545,89918,0],['2026-01-19',108096,112579,0],['2026-01-20',114647,107201,0],['2026-01-21',111372,96801,0],['2026-01-22',108270,132455,0],['2026-01-23',101724,80188,0],['2026-01-24',98451,74552,0],['2026-01-25',95178,72353,0],['2026-01-26',116069,108720,0],['2026-01-27',119200,95950,0],['2026-01-28',111543,102295,0],['2026-01-29',109734,89333,0],['2026-01-30',99737,112523,0],['2026-01-31',96471,118555,0],
+  ['2026-02-01',99792,99546,0],['2026-02-02',130032,128364,0],['2026-02-03',130032,100815,0],['2026-02-04',120960,101149,0],['2026-02-05',117936,93335,0],['2026-02-06',114912,98784,0],['2026-02-07',96768,92172,0],['2026-02-08',102816,81020,0],['2026-02-09',114912,94135,0],['2026-02-10',117936,108351,0],['2026-02-11',111888,99797,0],['2026-02-12',105840,107989,0],['2026-02-13',96768,74309,0],['2026-02-14',78624,58928,0],['2026-02-15',81648,62186,0],['2026-02-16',84672,68091,0],['2026-02-17',84672,67358,0],['2026-02-18',102816,84406,0],['2026-02-19',111888,119899,0],['2026-02-20',102816,104134,0],['2026-02-21',96768,76311,0],['2026-02-22',99792,101692,0],['2026-02-23',127008,98603,0],['2026-02-24',133056,94536,0],['2026-02-25',127008,111250,0],['2026-02-26',120960,139018,0],['2026-02-27',114912,120314,0],['2026-02-28',96768,112140,0],
+  ['2026-03-01',91332,86703,450],['2026-03-02',113021,154559,506],['2026-03-03',113589,126366,616],['2026-03-04',109457,125802,4323],['2026-03-05',110600,133248,1541],['2026-03-06',106605,100905,1808],['2026-03-07',91177,96872,3554],['2026-03-08',95528,88306,602],['2026-03-09',122354,133165,9858],['2026-03-10',124136,190321,4528],['2026-03-11',124136,134520,9033],['2026-03-12',120559,128324,12382],['2026-03-13',115599,105159,8913],['2026-03-14',102746,97888,4038],['2026-03-15',109134,98941,15523],['2026-03-16',106955,100251,9243],['2026-03-17',111768,88983,10851],['2026-03-18',113707,102163,7859],['2026-03-19',114067,115981,13472],['2026-03-20',96483,108555,8393],['2026-03-21',88647,90959,8990],['2026-03-22',90219,105281,10063],['2026-03-23',121422,108089,8001],['2026-03-24',109924,96196,11791],['2026-03-25',103829,85416,10638],['2026-03-26',104649,97530,11699],['2026-03-27',104593,92892,15079],['2026-03-28',97841,78872,6122],['2026-03-29',98295,91279,12543],['2026-03-30',122238,105918,14079],['2026-03-31',125389,170150,17858],
+  ['2026-04-01',135726,104233,15121],['2026-04-02',132014,125982,17326],['2026-04-03',112123,119524,11169],['2026-04-04',100227,125391,15851],['2026-04-05',108926,89943,13248],['2026-04-06',129445,223061,28234],['2026-04-07',134506,117624,16302],['2026-04-08',129062,103814,25298],['2026-04-09',137515,164874,30694],['2026-04-10',127973,133035,20226],['2026-04-11',114052,126352,10664],['2026-04-12',118793,93725,14320],['2026-04-13',134873,117132,15622],['2026-04-14',128403,115157,14191],['2026-04-15',127465,112473,12688],['2026-04-16',123646,130582,14242],['2026-04-17',101418,107718,10695],['2026-04-18',96839,85446,8732],['2026-04-19',99563,98858,12416],['2026-04-20',97235,99106,7842],['2026-04-21',104183,93228,11827],['2026-04-22',113664,78467,10278],['2026-04-23',114799,149982,7823],['2026-04-24',107429,91098,6894],['2026-04-25',97513,85637,7604],['2026-04-26',103933,79015,6947],['2026-04-27',119062,86767,8977],['2026-04-28',116404,115182,8318],['2026-04-29',119177,134761,9952],['2026-04-30',114029,109030,8048],
+  ['2026-05-01',98000,86543,5074],['2026-05-02',98000,90526,8259],['2026-05-03',108500,112590,5936],['2026-05-04',129500,108199,11252],['2026-05-05',133000,202861,24847],['2026-05-06',129500,142450,17443],['2026-05-07',122500,141804,16521],['2026-05-08',115500,143810,17241],['2026-05-09',108500,145571,10886],['2026-05-10',112000,140735,15994],['2026-05-11',119000,110316,6853],['2026-05-12',126000,111242,8378],['2026-05-13',115500,189761,20933],['2026-05-14',108500,144208,15586],['2026-05-15',105000,96741,13310],['2026-05-16',101500,88896,11128],['2026-05-17',105000,87109,19923],['2026-05-18',115500,89634,12623],['2026-05-19',122500,115079,16142],['2026-05-20',119000,102549,17172],['2026-05-21',115500,106965,21510],['2026-05-22',108500,114671,13866],['2026-05-23',105000,77919,18051],['2026-05-24',105000,91042,16751],['2026-05-25',115500,92255,20738],['2026-05-26',115500,127509,36845],['2026-05-27',112000,123245,24784],['2026-05-28',112000,87005,35467],['2026-05-29',108500,100968,34597],['2026-05-30',105000,89993,30666],['2026-05-31',105000,102372,45207],
+  ['2026-06-01',159490,100215,38911],['2026-06-02',157030,110447,46489],['2026-06-03',163180,108803,56239],['2026-06-04',141450,104098,57473],['2026-06-05',141040,97624,52737],['2026-06-06',133250,114412,55187],['2026-06-07',134480,93990,55433],['2026-06-08',156210,114597,67020],['2026-06-09',151700,91264,66642],['2026-06-10',141040,112705,72944],['2026-06-11',161540,114190,58160],['2026-06-12',150880,89533,52198],['2026-06-13',145140,78721,55984],['2026-06-14',134890,91915,56122],['2026-06-15',141450,97143,53699],['2026-06-16',136530,120486,51789],['2026-06-17',125460,92470,42600],['2026-06-18',143910,93107,53693],['2026-06-19',131610,72036,41566],['2026-06-20',113570,84598,30429],['2026-06-21',119720,76454,30672],['2026-06-22',138990,83836,34550],['2026-06-23',140630,111928,29224],['2026-06-24',135710,84993,30655],['2026-06-25',135710,86060,30852],['2026-06-26',127920,85235,30144],['2026-06-27',119720,66851,19973],['2026-06-28',89380,68857,16002],['2026-06-29',107830,79065,14363],['2026-06-30',119310,124176,28379],
+];
+
+// Granularidade diária — labels no 1º dia de cada mês + 30/06
+// Toggle diário/semanal
+(function(){
+  const isos=histDados.map(d=>d[0]);
+  const spD=histDados.map(d=>d[2]);
+  const toD=histDados.map(d=>d[2]+d[3]);
+  const tgD=histDados.map(d=>d[1]);
+
+  // ── Quantidade de resgates diários YTD ──
+  const resgQtd={
+    '2026-01-01':390,'2026-01-02':739,'2026-01-03':404,'2026-01-04':398,'2026-01-05':381,'2026-01-06':525,'2026-01-07':551,'2026-01-08':481,'2026-01-09':470,'2026-01-10':340,'2026-01-11':393,'2026-01-12':321,'2026-01-13':395,'2026-01-14':409,'2026-01-15':369,'2026-01-16':291,'2026-01-17':330,'2026-01-18':346,'2026-01-19':692,'2026-01-20':1442,'2026-01-21':1627,'2026-01-22':1481,'2026-01-23':1352,'2026-01-24':915,'2026-01-25':913,'2026-01-26':953,'2026-01-27':949,'2026-01-28':1119,'2026-01-29':843,'2026-01-30':1156,'2026-01-31':899,
+    '2026-02-01':909,'2026-02-02':1202,'2026-02-03':888,'2026-02-04':741,'2026-02-05':741,'2026-02-06':616,'2026-02-07':534,'2026-02-08':624,'2026-02-09':674,'2026-02-10':412,'2026-02-11':836,'2026-02-12':603,'2026-02-13':448,'2026-02-14':412,'2026-02-15':425,'2026-02-16':455,'2026-02-17':471,'2026-02-18':599,'2026-02-19':700,'2026-02-20':573,'2026-02-21':570,'2026-02-22':786,'2026-02-23':698,'2026-02-24':587,'2026-02-25':618,'2026-02-26':3669,'2026-02-27':603,'2026-02-28':588,
+    '2026-03-01':681,'2026-03-02':949,'2026-03-03':729,'2026-03-04':670,'2026-03-05':579,'2026-03-06':416,'2026-03-07':565,'2026-03-08':453,'2026-03-09':560,'2026-03-10':667,'2026-03-11':659,'2026-03-12':578,'2026-03-13':537,'2026-03-14':542,'2026-03-15':577,'2026-03-16':604,'2026-03-17':518,'2026-03-18':620,'2026-03-19':584,'2026-03-20':552,'2026-03-21':498,'2026-03-22':583,'2026-03-23':589,'2026-03-24':652,'2026-03-25':482,'2026-03-26':531,'2026-03-27':548,'2026-03-28':460,'2026-03-29':503,'2026-03-30':665,'2026-03-31':704,
+    '2026-04-01':5779,'2026-04-02':1423,'2026-04-03':933,'2026-04-04':726,'2026-04-05':637,'2026-04-06':859,'2026-04-07':656,'2026-04-08':751,'2026-04-09':989,'2026-04-10':650,'2026-04-11':525,'2026-04-12':603,'2026-04-13':646,'2026-04-14':586,'2026-04-15':638,'2026-04-16':756,'2026-04-17':817,'2026-04-18':557,'2026-04-19':599,'2026-04-20':611,'2026-04-21':707,'2026-04-22':713,'2026-04-23':832,'2026-04-24':559,'2026-04-25':510,'2026-04-26':607,'2026-04-27':676,'2026-04-28':719,'2026-04-29':755,'2026-04-30':652,
+    '2026-05-01':908,'2026-05-02':1039,'2026-05-03':1001,'2026-05-04':1004,'2026-05-05':1003,'2026-05-06':829,'2026-05-07':468,'2026-05-08':467,'2026-05-09':531,'2026-05-10':483,'2026-05-11':384,'2026-05-12':467,'2026-05-13':484,'2026-05-14':365,'2026-05-15':321,'2026-05-16':264,'2026-05-17':326,'2026-05-18':328,'2026-05-19':365,'2026-05-20':352,'2026-05-21':759,'2026-05-22':333,'2026-05-23':297,'2026-05-24':340,'2026-05-25':329,'2026-05-26':302,'2026-05-27':310,'2026-05-28':309,'2026-05-29':287,'2026-05-30':291,'2026-05-31':319,
+    '2026-06-01':366,'2026-06-02':517,'2026-06-03':451,'2026-06-04':370,'2026-06-05':363,'2026-06-06':325,'2026-06-07':330,'2026-06-08':379,'2026-06-09':455,'2026-06-10':1748,'2026-06-11':1115,'2026-06-12':522,'2026-06-13':216,'2026-06-14':246,'2026-06-15':255,'2026-06-16':272,'2026-06-17':272,'2026-06-18':216,'2026-06-19':598,'2026-06-20':811,'2026-06-21':813,'2026-06-22':289,'2026-06-23':254,'2026-06-24':205,'2026-06-25':245,'2026-06-26':286,'2026-06-27':253,'2026-06-28':235,'2026-06-29':231,'2026-06-30':536,
+  };
+  const resgD=isos.map(iso=>resgQtd[iso]||0);
+
+  // ── Dados diários ──
+  const mesNomes=['Jan','Fev','Mar','Abr','Mai','Jun'];
+  const labsDia=isos.map(iso=>{
+    const[,m,d]=iso.split('-');
+    if(d==='01') return mesNomes[+m-1];
+    if(iso==='2026-06-30') return '30/Jun';
+    return '';
+  });
+  const cambioIdxDia=isos.indexOf('2026-05-07');
+  const turbDias=new Set(['2026-06-10','2026-06-11','2026-06-12','2026-06-19','2026-06-20','2026-06-21','2026-06-30']);
+  const bgDia=isos.map(iso=>turbDias.has(iso)?'rgba(237,161,0,0.18)':'rgba(0,0,0,0)');
+  const maxToDia=Math.max(...toD);
+
+  // ── Dados semanais (semanas de 7 dias a partir de 01/jan) ──
+  const wkMap={};
+  histDados.forEach(([iso,tg,sp,mf],i)=>{
+    const start=new Date('2026-01-01T12:00:00');
+    const dn=Math.floor((new Date(iso+'T12:00:00')-start)/86400000);
+    const wk=Math.floor(dn/7);
+    if(!wkMap[wk])wkMap[wk]={tg:0,sp:0,to:0,isos:[],wk};
+    wkMap[wk].tg+=tg; wkMap[wk].sp+=sp; wkMap[wk].to+=sp+mf; wkMap[wk].isos.push(iso);
+  });
+  const wkArr=Object.values(wkMap).sort((a,b)=>a.wk-b.wk);
+  const labsSem=wkArr.map(w=>{
+    const first=w.isos[0];const[,m,d]=first.split('-');
+    // label no início de cada mês (quando o 1º dia da semana está no dia 1-7 do mês e é o primeiro dessa semana naquele mês)
+    const prevWkIsos=wkArr[wkArr.indexOf(w)-1]?.isos||[];
+    const prevMes=prevWkIsos.length?prevWkIsos[prevWkIsos.length-1].split('-')[1]:null;
+    return m!==prevMes?mesNomes[+m-1]:'';
+  });
+  const spSem=wkArr.map(w=>w.sp);
+  const toSem=wkArr.map(w=>w.to);
+  const tgSem=wkArr.map(w=>w.tg);
+  const resgSem=wkArr.map(w=>w.isos.reduce((a,iso)=>a+(resgQtd[iso]||0),0));
+  const cambioIdxSem=wkArr.findIndex(w=>w.isos.some(d=>d>='2026-05-07'));
+  const turbWkSet=new Set(wkArr.filter(w=>w.isos.some(d=>turbDias.has(d))).map(w=>w.wk));
+  const bgSem=wkArr.map(w=>turbWkSet.has(w.wk)?'rgba(237,161,0,0.18)':'rgba(0,0,0,0)');
+  const maxToSem=Math.max(...toSem);
+
+  // ── KPIs (fixos, independentes da visão) ──
+  const h1Sp=spD.reduce((a,b)=>a+b);
+  const h1To=toD.reduce((a,b)=>a+b);
+  const h1Tg=tgD.reduce((a,b)=>a+b);
+  const preSp=spD.filter((_,i)=>isos[i]<'2026-05-07');
+  const posSp=spD.filter((_,i)=>isos[i]>='2026-05-07');
+  const avgSpPre=preSp.reduce((a,b)=>a+b)/preSp.length;
+  const avgSpPos=posSp.reduce((a,b)=>a+b)/posSp.length;
+  document.getElementById('kpiHist').innerHTML=`
+    <div class="k"><div class="kl">Receita total H1</div><div class="kv">${fM(h1To)}</div><div class="ks">target ${fM(h1Tg)} | ${pp((h1To-h1Tg)/h1Tg*100)}</div></div>
+    <div class="k"><div class="kl">Receita spoint H1</div><div class="kv">${fM(h1Sp)}</div><div class="ks">${(h1Sp/h1To*100).toFixed(1)}% do total H1</div></div>
+    <div class="k"><div class="kl">Média diária spoint — pré 07/05</div><div class="kv pos">${fK(avgSpPre)}</div><div class="ks">câmbio original (200/500/800)</div></div>
+    <div class="k"><div class="kl">Média diária spoint — pós 07/05</div><div class="kv neg">${fK(avgSpPos)}</div><div class="ks">${pp((avgSpPos-avgSpPre)/avgSpPre*100)} vs. pré-ajuste</div></div>
+  `;
+  const quedaPct=((avgSpPos-avgSpPre)/avgSpPre*100).toFixed(1);
+  document.getElementById('histBox').innerHTML=`O impacto do ajuste de câmbio de <strong>07/05</strong> é visível independente da granularidade: a receita spoint média diária caiu de <strong>${fK(avgSpPre)}</strong> (pré-ajuste) para <strong>${fK(avgSpPos)}</strong> (pós-ajuste) — uma queda de <strong>${quedaPct}%</strong>. O total (azul) se sustentou parcialmente graças ao crescimento do <strong>mfit</strong>. Na visão semanal, o padrão fica ainda mais claro: é possível ver o patamar anterior, o ponto de queda e a estabilização no novo nível. Os picos em amarelo (junho) são os dias de câmbio turbinado, analisados em detalhe abaixo.`;
+
+  // ── Gráfico ──
+  let chHist=null;
+  const annotPlugin={
+    id:'cambioAnnot',
+    afterDraw(chart){
+      const{ctx,scales:{x,y},chartArea}=chart;
+      const idx=chart._cambioIdx;
+      if(idx==null||idx<0)return;
+      const xp=x.getPixelForValue(idx);
+      ctx.save();
+      ctx.strokeStyle='#e34948';ctx.lineWidth=2;ctx.setLineDash([5,3]);
+      ctx.beginPath();ctx.moveTo(xp,chartArea.top);ctx.lineTo(xp,chartArea.bottom);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#e34948';ctx.font='500 10px sans-serif';ctx.textAlign='left';
+      ctx.fillText('câmbio +69% (07/05)',xp+5,chartArea.top+14);
+      ctx.restore();
+    }
+  };
+
+  function buildHist(mode){
+    const isDia=mode==='dia';
+    const labs=isDia?labsDia:labsSem;
+    const spArr=isDia?spD:spSem;
+    const toArr=isDia?toD:toSem;
+    const tgArr=isDia?tgD:tgSem;
+    const resgArr=isDia?resgD:resgSem;
+    const bgArr=isDia?bgDia:bgSem;
+    const maxTo=isDia?maxToDia:maxToSem;
+    const cambioIdx=isDia?cambioIdxDia:cambioIdxSem;
+    const ptRadius=isDia?0:3;
+    const ptRadiusResg=isDia?0:2;
+    const tooltipTitle=isDia
+      ? items=>{const iso=isos[items[0].dataIndex];const[y,m,dd]=iso.split('-');return`${dd}/${m}/${y}`;}
+      : items=>{const w=wkArr[items[0].dataIndex];const f=w.isos[0];const l=w.isos[w.isos.length-1];const fmt=s=>{const p=s.split('-');return p[2]+'/'+p[1];};return`Sem. ${fmt(f)}–${fmt(l)}`;};
+
+    if(chHist)chHist.destroy();
+    const canvas=document.getElementById('cHist');
+    chHist=new Chart(canvas,{
+      type:'bar',
+      data:{labels:labs,datasets:[
+        {type:'bar',data:labs.map(()=>maxTo*1.18),backgroundColor:bgArr,borderWidth:0,barPercentage:1,categoryPercentage:1,order:5},
+        {type:'line',label:'Total',data:toArr,borderColor:'#2a78d6',borderWidth:2,pointRadius:ptRadius,pointBackgroundColor:'#2a78d6',tension:.3,fill:false,order:1,yAxisID:'y'},
+        {type:'line',label:'Spoint',data:spArr,borderColor:'#1baf7a',borderWidth:1.5,pointRadius:ptRadius,pointBackgroundColor:'#1baf7a',tension:.3,fill:false,order:2,yAxisID:'y'},
+        {type:'line',label:'Target',data:tgArr,borderColor:'#eda100',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.3,fill:false,order:3,yAxisID:'y'},
+        {type:'line',label:'Resgates',data:resgArr,borderColor:'#a855f7',borderWidth:1.5,pointRadius:ptRadiusResg,pointBackgroundColor:'#a855f7',tension:.3,fill:false,order:2,yAxisID:'y2'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{mode:'index',intersect:false,filter:d=>d.datasetIndex>0,callbacks:{
+            title:tooltipTitle,
+            label:d=>{
+              if(d.datasetIndex===1)return`Total: ${fFull(d.raw)}`;
+              if(d.datasetIndex===2)return`Spoint: ${fFull(d.raw)}`;
+              if(d.datasetIndex===3)return`Target: ${fFull(d.raw)}`;
+              if(d.datasetIndex===4)return`Resgates: ${d.raw.toLocaleString('pt-BR')} un.`;
+            }
+          }}
+        },
+        scales:{
+          x:{grid:{color:g},ticks:{color:t,maxRotation:0,autoSkip:false}},
+          y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},position:'left'},
+          y2:{grid:{display:false},ticks:{color:'#a855f7',callback:v=>v>=1000?Math.round(v/1000)+'k':v},position:'right',title:{display:true,text:'Resgates (un.)',color:'#a855f7',font:{size:10}}}
+        }
+      },
+      plugins:[annotPlugin]
+    });
+    chHist._cambioIdx=cambioIdx;
+  }
+
+  window.setHistView=function(mode){
+    buildHist(mode);
+    document.getElementById('btnDia').style.background=mode==='dia'?'#2a78d6':'transparent';
+    document.getElementById('btnDia').style.color=mode==='dia'?'#fff':'var(--text-secondary)';
+    document.getElementById('btnSem').style.background=mode==='sem'?'#2a78d6':'transparent';
+    document.getElementById('btnSem').style.color=mode==='sem'?'#fff':'var(--text-secondary)';
+  };
+
+  buildHist('dia');
+})();
+
 // ── DADOS JUNHO diários ──
-const junSp=[88633,102420,93948,96792,90235,106421,87071,100319,85555,101661,102676,81045,73414,79134,88718,111700,88596,80200,64487,80611,73268,80981,104437,77490,80369,78650,62320,65240,70204,105650];
-const junMf=[50494,54517,71094,64779,60126,63178,62351,81299,72351,83988,69572,60686,61291,68903,62125,60575,46474,66601,49114,34416,33858,37405,36716,38158,36543,36730,24504,19619,23224,37756];
+const junSp=[100215,110447,108803,104098,97624,114412,93990,114597,91264,112705,114190,89533,78721,91915,97143,120486,92470,93107,72036,84598,76454,83836,111928,84993,86060,85235,66851,68857,79065,124176];
+const junMf=[38911,46489,56239,57473,52737,55187,55433,67020,66642,72944,58160,52198,55984,56122,53699,51789,42600,53693,41566,30429,30672,34550,29224,30655,30852,30144,19973,16002,14363,28379];
 const junTo=junSp.map((v,i)=>v+junMf[i]);
 const junTg=[159490,157030,163180,141450,141040,133250,134480,156210,151700,141040,161540,150880,145140,134890,141450,136530,125460,143910,131610,113570,119720,138990,140630,135710,135710,127920,119720,89380,107830,119310];
 const turbSet=new Set([10,11,12,19,20,21,30]);
 const junLab=Array.from({length:30},(_,i)=>i+1+'/06');
 
-// KPIs junho
-const totSp=junSp.reduce((a,b)=>a+b,0);  // 2.649.981 — CORRIGIDO (mas planilha tem 2.602.245)
-// Usando exatamente os dados da planilha:
-const totSpReal=2602245; // conforme imagem do usuário
-const totMfReal=1568442; // conforme usuário
-const totToReal=totSpReal+totMfReal; // 4.170.687
+// KPIs junho — direto dos dados da planilha (sem ajuste)
+const totSpReal=junSp.reduce((a,b)=>a+b,0); // 2.849.809
+const totMfReal=junMf.reduce((a,b)=>a+b,0); // 1.330.129
+const totToReal=totSpReal+totMfReal; // 4.179.938
 const totTg=junTg.reduce((a,b)=>a+b,0); // 4.098.770
-// Ajuste proporcional para gráfico (usamos soma diária para traçar a linha)
-const scaleSp=totSpReal/junSp.reduce((a,b)=>a+b,0);
-const junSpAdj=junSp.map(v=>Math.round(v*scaleSp));
-const scaleMf=totMfReal/junMf.reduce((a,b)=>a+b,0);
-const junMfAdj=junMf.map(v=>Math.round(v*scaleMf));
-const junToAdj=junSpAdj.map((v,i)=>v+junMfAdj[i]);
+const junSpAdj=junSp;
+const junMfAdj=junMf;
+const junToAdj=junTo;
 
 document.getElementById('kpiJun').innerHTML=`
   <div class="k"><div class="kl">Receita total (spoint+mfit)</div><div class="kv">${fFull(totToReal)}</div><div class="ks">target ${fFull(totTg)}</div></div>
@@ -192,18 +378,29 @@ document.getElementById('kpiJun').innerHTML=`
 `;
 
 // Chart Jun
+const junResgQtd=[366,517,451,370,363,325,330,379,455,1748,1115,522,216,246,255,272,272,216,598,811,813,289,254,205,245,286,253,235,231,536];
 const bgBands=Array.from({length:30},(_,i)=>turbSet.has(i+1)?'rgba(237,161,0,0.13)':'rgba(0,0,0,0)');
 new Chart(document.getElementById('cJun'),{
   type:'bar',
   data:{labels:junLab,datasets:[
-    {type:'bar',data:Array(30).fill(220000),backgroundColor:bgBands,borderWidth:0,barPercentage:1,categoryPercentage:1,order:4},
-    {type:'line',label:'Total',data:junToAdj,borderColor:'#2a78d6',borderWidth:2,pointRadius:2.5,pointBackgroundColor:'#2a78d6',tension:.25,fill:false,order:1},
-    {type:'line',label:'Spoint',data:junSpAdj,borderColor:'#1baf7a',borderWidth:2,pointRadius:2,pointBackgroundColor:'#1baf7a',tension:.25,fill:false,order:2},
-    {type:'line',label:'Target',data:junTg,borderColor:'#eda100',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false,order:3},
+    {type:'bar',data:Array(30).fill(250000),backgroundColor:bgBands,borderWidth:0,barPercentage:1,categoryPercentage:1,order:4},
+    {type:'line',label:'Total',data:junToAdj,borderColor:'#2a78d6',borderWidth:2,pointRadius:2.5,pointBackgroundColor:'#2a78d6',tension:.25,fill:false,order:1,yAxisID:'y'},
+    {type:'line',label:'Spoint',data:junSpAdj,borderColor:'#1baf7a',borderWidth:2,pointRadius:2,pointBackgroundColor:'#1baf7a',tension:.25,fill:false,order:2,yAxisID:'y'},
+    {type:'line',label:'Target',data:junTg,borderColor:'#eda100',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false,order:3,yAxisID:'y'},
+    {type:'line',label:'Resgates',data:junResgQtd,borderColor:'#a855f7',borderWidth:1.5,pointRadius:2.5,pointBackgroundColor:'#a855f7',tension:.25,fill:false,order:2,yAxisID:'y2'},
   ]},
   options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,filter:d=>d.datasetIndex>0}},
-    scales:{x:{grid:{color:g},ticks:{color:t,maxTicksLimit:15}},y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},min:50000,max:230000}}
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,filter:d=>d.datasetIndex>0,callbacks:{label:d=>{
+      if(d.datasetIndex===1)return`Total: ${fFull(d.raw)}`;
+      if(d.datasetIndex===2)return`Spoint: ${fFull(d.raw)}`;
+      if(d.datasetIndex===3)return`Target: ${fFull(d.raw)}`;
+      if(d.datasetIndex===4)return`Resgates: ${d.raw.toLocaleString('pt-BR')} un.`;
+    }}}},
+    scales:{
+      x:{grid:{color:g},ticks:{color:t,maxTicksLimit:15}},
+      y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},min:50000,max:250000,position:'left'},
+      y2:{grid:{display:false},ticks:{color:'#a855f7',callback:v=>v>=1000?Math.round(v/1000)+'k':v},position:'right',min:0,max:2200,title:{display:true,text:'Resgates (un.)',color:'#a855f7',font:{size:10}}}
+    }
   }
 });
 
@@ -211,8 +408,8 @@ new Chart(document.getElementById('cJun'),{
 const events=[
   {date:'Até 07/05/2026',title:'Câmbio original',color:'#1baf7a',pts:'200 / 500 / 800 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 31,8 pts/R$. Programa com maior atratividade — volume de resgates estável (~890 resgates/dia), receita spoint forte (~R$117k/dia).'},
   {date:'07/05/2026',title:'Ajuste para câmbio padrão novo (+75%)',color:'#e34948',pts:'350 / 850 / 1.300 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 53,8 pts/R$ (+69% vs original). Impacto imediato: receita spoint caiu de ~R$117k/dia para ~R$88k/dia (−25%) nas semanas seguintes. Volume de resgates desabou ~55%.'},
-  {date:'10–12 e 19–21/06/2026',title:'Câmbio turbinado — dias promocionais',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 42,0 pts/R$ (+32% vs original, −22% vs padrão). Picos de resgate confirmados, com ticket médio mais alto (usuários concentraram no tier R$26). Efeito ressaca observado nos dias seguintes.'},
-  {date:'30/06/2026',title:'Câmbio turbinado — fim de mês',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Terceiro evento de câmbio turbinado em junho. Volume de resgates voltou a subir (536 resgates, R$8.638 resgatados), confirmando que usuários respondem ao incentivo de câmbio favorável.'},
+  {date:'10–12 e 19–21/06/2026',title:'Câmbio turbinado — dias promocionais',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Custo médio: 42,0 pts/R$ (+32% vs original, −22% vs padrão). Picos de resgate confirmados nos dias de campanha. O câmbio turbinado é uma alavanca real de engajamento — mas é uma alavanca sensível. Funciona para mobilizar o usuário e elevar o volume de resgates, porém gera um comportamento de espera: parte da base passa a acumular pontos e aguardar os dias promocionais para resgatar, sem necessariamente converter em nova compra imediata. O resultado é uma antecipação de consumo que cria um vácuo de receita nos dias seguintes — o chamado efeito ressaca.'},
+  {date:'30/06/2026',title:'Câmbio turbinado — fim de mês',color:'#eda100',pts:'275 / 675 / 1.075 pts',vals:'R$6 / R$16 / R$26',sub:'Terceiro evento de câmbio turbinado em junho. Volume de resgates voltou a subir, confirmando que usuários respondem ao incentivo de câmbio favorável. A conclusão é consistente com os episódios anteriores: a alavanca funciona, mas precisa ser calibrada em duração e sempre acompanhada de comunicação que incentive nova compra imediata, para fechar o ciclo e não apenas antecipar consumo de pontos acumulados.'},
 ];
 const tlEl=document.getElementById('timeline');
 events.forEach((e,i)=>{
@@ -230,23 +427,48 @@ events.forEach((e,i)=>{
   </div>`;
 });
 
+// Bloco de conclusão e aprendizados
+tlEl.innerHTML+=`<div class="tli" style="margin-top:.5rem">
+  <div class="tli-dot">
+    <div class="tli-circle" style="border-color:#2a78d6;background:#2a78d622"></div>
+  </div>
+  <div class="tli-body">
+    <div class="tli-date">Conclusão & aprendizados — H1 2026</div>
+    <div class="tli-title" style="color:var(--text-primary)">O câmbio turbinado funciona — mas é uma alavanca que precisa ser usada com precisão cirúrgica</div>
+    <div class="tli-sub">
+      Os três episódios de junho confirmam o padrão: <strong>a alavanca é real</strong>, mas opera com efeitos colaterais previsíveis que precisam entrar no cálculo antes de qualquer acionamento.<br><br>
+      <strong>O que aprendemos:</strong><br>
+      • O câmbio turbinado mobiliza o usuário e eleva o volume de resgates — o engajamento existe e responde ao estímulo de forma clara.<br>
+      • Parte da base desenvolve um comportamento de espera: acumula pontos e segura o resgate aguardando os dias promocionais, sem que isso se converta em mais compras. Isso inverte a lógica do programa — o benefício existe, mas não gera incremento real de receita na mesma proporção.<br>
+      • Quando o resgate não converte em nova compra, o efeito é tóxico: o usuário consome o saldo disponível no melhor câmbio possível e para. Resultado: vácuo de receita nos dias seguintes, com a base "satisfeita" sem ter comprado mais nada.<br>
+      • Campanhas mais longas criam ressaca mais profunda. Duração curta é mais eficiente — menos tempo de janela, menos acúmulo especulativo de resgates.<br>
+      • Estudos preliminares indicam que apenas <strong>11% dos resgates em dias turbinados</strong> resultam em nova compra no mesmo dia — o que reforça que a maioria dos usuários enxerga o turbinado como oportunidade de liquidar pontos, não de comprar mais.<br><br>
+      <strong>Próximos passos:</strong><br>
+      • <strong>Calibrar o câmbio de forma perene:</strong> o objetivo não é ficar fazendo campanhas pontuais — é ajustar o câmbio padrão para um nível de equilíbrio sustentável. Ações turbinadas devem ser exceção, não rotina, exatamente porque o custo comportamental é alto.<br>
+      • <strong>Casar com política de expiração de pontos:</strong> a expiração bem calibrada mitiga o comportamento de acúmulo especulativo — o usuário que sabe que seus pontos vencem tem menos incentivo para esperar pelo próximo turbinado.<br>
+      • <strong>Monitorar o rebote pós-campanha:</strong> criar KPI de receita D+1 a D+7 após cada ação para distinguir conversão real de mera antecipação de saldo. Sem esse dado, é impossível medir o custo real de cada campanha.<br>
+      • <strong>Trabalhar o long tail da jornada:</strong> usuários que concentram resgates em dias turbinados sem compra associada devem entrar em régua de CRM específica — o objetivo é converter esse comportamento pontual em frequência de compra real.
+    </div>
+  </div>
+</div>`;
+
 // ── DADOS MENSAIS ──
 const meses=['Jan','Fev','Mar','Abr','Mai','Jun'];
-// Spoint mensal (soma diária real da planilha)
 const recSp=[
-  [37528,74403,58508,58839,83349,121683,106141,131697,118375,133359,88760,86625,100956,112091,101407,77310,112419,89918,112579,107201,96801,132455,80188,74552,72353,108720,95950,102295,89333,112523,118555].reduce((a,b)=>a+b),
-  [99546,128364,100815,101149,93335,98784,92172,81020,94135,108351,99797,107989,74309,58928,62186,68091,67358,84406,119899,104134,76311,101692,98603,94536,111250,139018,120314,112140].reduce((a,b)=>a+b),
-  [84485,147111,120999,114843,125944,96476,90700,82091,123679,183278,128483,120695,100298,89374,92421,89745,85738,99327,107019,103750,86593,101104,102116,90344,81357,90207,89696,73557,85682,97747,163195].reduce((a,b)=>a+b),
-  [96336,120201,112591,117017,84305,203625,112645,96775,153563,122767,113819,86873,112025,106399,108238,122279,99273,81865,93107,95390,82978,74406,142176,83537,83525,73896,76665,110893,122368,103050].reduce((a,b)=>a+b),
-  [80546,85771,108076,100676,186979,128819,132985,138304,134027,132657,104246,103293,178167,139047,88837,84653,82859,85092,110606,94949,99474,105938,75380,84940,87483,118661,111972,80259,92356,82544,93698].reduce((a,b)=>a+b),
-  totSpReal
+  2996873, // Jan
+  2698632, // Fev
+  3439594, // Mar (novos dados)
+  3417197, // Abr (novos dados)
+  3564568, // Mai (novos dados)
+  totSpReal // Jun
 ];
-// mfit mensal real
-const recMf=[0,0,
-  [2668,7955,5982,15282,8845,6236,9727,6817,19344,11571,15070,20010,13775,12552,22043,19750,14096,10695,22434,13197,13252,14240,13974,17644,14696,19022,18275,11437,18139,21270,24813].reduce((a,b)=>a+b),
-  [22973,23108,18102,24224,18886,47671,21280,32337,42005,30494,23197,21172,20729,22949,16923,22545,19140,12313,18167,11062,22077,14338,15628,14455,9717,11005,18000,12608,22345,14028].reduce((a,b)=>a+b),
-  [11072,13015,10450,18747,40729,31073,25137,22747,22146,24072,12923,16327,32528,20397,21214,15372,24173,17165,20615,24772,29001,22598,20590,22853,25510,45693,36057,42127,43208,38115,53881].reduce((a,b)=>a+b),
-  totMfReal
+const recMf=[
+  0,       // Jan
+  0,       // Fev
+  254356,  // Mar (novos dados)
+  401549,  // Abr (novos dados)
+  573983,  // Mai (novos dados)
+  totMfReal // Jun
 ];
 const recTo=recSp.map((v,i)=>v+recMf[i]);
 const mfShare=recMf.map((v,i)=>recTo[i]>0?(v/recTo[i]*100):0);
@@ -262,14 +484,20 @@ new Chart(document.getElementById('cMfit'),{
   data:{labels:meses,datasets:[
     {label:'Spoint',data:recSp,backgroundColor:'rgba(42,120,214,0.82)',borderRadius:5,stack:'r',yAxisID:'y'},
     {label:'mfit',data:recMf,backgroundColor:'rgba(74,58,167,0.82)',borderRadius:5,stack:'r',yAxisID:'y'},
-    {type:'line',label:'Budget saldo',data:budSaldo,borderColor:'#e34948',borderWidth:2,borderDash:[5,3],pointRadius:5,pointBackgroundColor:'#e34948',fill:false,tension:.2,yAxisID:'y2'}
+    {type:'line',label:'Saldo consumido',data:resgMes,borderColor:'#e34948',borderWidth:2,pointRadius:5,pointBackgroundColor:'#e34948',fill:false,tension:.2,yAxisID:'y2'},
+    {type:'line',label:'Budget saldo',data:budSaldo,borderColor:'#e34948',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,tension:.2,yAxisID:'y2'}
   ]},
   options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:d=>{
+      if(d.datasetIndex===0)return`Spoint: ${fFull(d.raw)}`;
+      if(d.datasetIndex===1)return`mfit: ${fFull(d.raw)}`;
+      if(d.datasetIndex===2)return`Saldo consumido: ${fFull(d.raw)}`;
+      if(d.datasetIndex===3)return`Budget saldo: ${fFull(d.raw)}`;
+    }}}},
     scales:{
       x:{grid:{color:g},ticks:{color:t}},
       y:{grid:{color:g},ticks:{color:t,callback:v=>fK(v)},stacked:true,position:'left',title:{display:true,text:'Receita (R$)',color:t,font:{size:11}}},
-      y2:{grid:{display:false},ticks:{color:'#e34948',callback:v=>fK(v)},position:'right',max:320000,title:{display:true,text:'Budget saldo',color:'#e34948',font:{size:11}}}
+      y2:{grid:{display:false},ticks:{color:'#e34948',callback:v=>fK(v)},position:'right',max:320000,title:{display:true,text:'Saldo (R$)',color:'#e34948',font:{size:11}}}
     }
   },
   plugins:[{id:'lbl',afterDraw(chart){
@@ -287,8 +515,7 @@ new Chart(document.getElementById('cMfit'),{
 });
 
 // mfit insight
-const mfGrowth=mfShare.filter(v=>v>0);
-document.getElementById('mfitBox').innerHTML=`O mfit contribuiu em média <strong>${(mfShare.reduce((a,b)=>a+b)/6).toFixed(1)}%</strong> da receita total no semestre — crescimento consistente desde março: Mar ${mfShare[2].toFixed(1)}% → Abr ${mfShare[3].toFixed(1)}% → Mai ${mfShare[4].toFixed(1)}% → Jun ${mfShare[5].toFixed(1)}%. Em junho, o incremento mfit foi de <strong>${fFull(totMfReal)}</strong> — sem o mfit, a receita spoint de junho estaria <strong>${pp((recSp[5]-totTg)/totTg*100)}</strong> vs. o target. O budget de saldo foi estourado em Abril (${fFull(resgMes[3])} vs. ${fFull(budSaldo[3])} autorizado), principal vetor do estouro orçamentário do H1.`;
+document.getElementById('mfitBox').innerHTML=`O mfit contribuiu em média <strong>${(mfShare.reduce((a,b)=>a+b)/6).toFixed(1)}%</strong> da receita total no semestre — crescimento consistente desde março: Mar ${mfShare[2].toFixed(1)}% → Abr ${mfShare[3].toFixed(1)}% → Mai ${mfShare[4].toFixed(1)}% → Jun ${mfShare[5].toFixed(1)}%. Em junho, o incremento mfit representou <strong>${fFull(totMfReal)}</strong> — sem o mfit, a receita spoint de junho estaria <strong>${pp((recSp[5]-totTg)/totTg*100)}</strong> vs. o target. O budget de saldo foi estourado em Abril (${fFull(resgMes[3])} vs. ${fFull(budSaldo[3])} autorizado), principal vetor do estouro orçamentário do H1.<br><br><strong>Conclusão estratégica:</strong> o mfit demonstrou ser uma excelente porta de entrada — trouxe uma base de usuários novos e incrementou receita de forma consistente ao longo do semestre. O próximo passo, porém, é migrar esse usuário para o ecossistema spoint: ele gera valor, mas numa estrutura dependente de um terceiro, o que limita tanto a margem quanto o relacionamento direto com a base. A alavanca principal é o CRM — seja via réguas específicas do mfit (ativando o usuário dentro do canal) ou via CRM spoint (trazendo-o para dentro do programa próprio). Estratégias de WhatsApp e mídia paga também permanecem no radar como vetores de aquisição e reativação desse perfil de usuário, que já demonstrou propensão ao consumo.`;
 
 // ROI
 const roiV=recSp.map((v,i)=>+(v/resgMes[i]).toFixed(1));
@@ -332,21 +559,22 @@ document.getElementById('kpiRoi').innerHTML=`
   <div class="k"><div class="kl">Pior ROI (${meses[worstI]})</div><div class="kv neg">${roiV[worstI]}x</div><div class="ks">pico de resgates sem contrapartida</div></div>
   <div class="k"><div class="kl">ROI médio H1</div><div class="kv">${(roiV.reduce((a,b)=>a+b)/6).toFixed(1)}x</div><div class="ks">equilíbrio saudável: 14x</div></div>
 `;
-document.getElementById('roiBox').innerHTML=`<strong>Atenção — risco de galinha dos ovos de ouro:</strong> Maio apresentou ROI de <strong>${roiV[4]}x</strong>, o mais alto do semestre — mas este número é <strong>enganoso</strong>. O câmbio mais restritivo (07/05) reduziu o volume de resgates abruptamente, não porque o programa melhorou, mas porque tornamos o resgate <strong>menos acessível</strong>. Usuários com saldo acumulado sob o câmbio antigo simplesmente pararam de resgatar ou esperaram pelos dias turbinados. Há um risco real de que tenhamos <strong>queimado o engajamento</strong>: o usuário que não consegue resgatar com seus pontos acumulados pode se sentir enganado e reduzir o uso da plataforma. A queda de volume pós-07/05 (de ~890 para ~260 resgates/dia) não é sinal de saúde — é sinal de supressão de demanda. Se esse usuário deixar de comprar, perdemos a receita que o saldo gerava. O equilíbrio saudável de <strong>14x</strong> garante que cada R$1 em saldo dado retorna R$14 em receita — sustentável sem sufocar o programa.`;
+document.getElementById('roiBox').innerHTML=`<strong>Atenção — risco de galinha dos ovos de ouro:</strong> Junho apresentou ROI de <strong>${roiV[5]}x</strong>, o mais alto do semestre — mas este número merece leitura cuidadosa. O câmbio mais restritivo (07/05) reduziu o volume de resgates de forma expressiva, não porque o programa melhorou sua eficiência, mas porque tornamos o resgate <strong>menos acessível</strong>. Há evidências de que parte da base reduziu a frequência de resgate ou passou a concentrá-la nos dias de câmbio turbinado, sem necessariamente aumentar o consumo. Há um risco real de que tenhamos <strong>comprometido o engajamento de longo prazo</strong>: o usuário que percebe que seus pontos acumulados perderam poder de compra pode reduzir o uso da plataforma ou tornar-se menos responsivo a futuras ações. A queda de volume pós-07/05 (de ~890 para ~260 resgates/dia) não é, por si só, sinal de saúde do programa — pode ser sinal de supressão de demanda. Se esse usuário reduzir a frequência de compra, a receita que o saldo gerava deixa de existir. O equilíbrio saudável de <strong>14x</strong> garante que cada R$1 em saldo dado retorna R$14 em receita — sustentável sem sufocar o programa.`;
 
 // ── EFEITO RESSACA ──
-// Antes campanha 1: dias 7-9 (idx 6,7,8); durante: 10-12 (idx 9,10,11); depois: 13-18 (idx 12..17)
-// Antes campanha 2: dias 16-18 (idx 15,16,17); durante: 19-21 (idx 18,19,20); depois: 22-26 (idx 21..25)
-const ressacaLab=['Pré C1\n(7-9/06)','Campanha C1\n(10-12/06)','Pós C1\n(13-18/06)','Pré C2\n(16-18/06)','Campanha C2\n(19-21/06)','Pós C2\n(22-26/06)'];
+// C1: pré 7-9 (idx 6,7,8), durante 10-12 (idx 9,10,11), pós 13-18 (idx 12..17)
+// C2: pré 16-18 (idx 15,16,17), durante 19-21 (idx 18,19,20), pós 22-26 (idx 21..25), rebote 27-30 (idx 26..29)
+const ressacaLab=['Pré C1\n(7-9/06)','Campanha C1\n(10-12/06)','Pós C1\n(13-18/06)','Pré C2\n(16-18/06)','Campanha C2\n(19-21/06)','Pós C2\n(22-26/06)','Rebote\n(27-30/06)'];
 const avg=(arr)=>arr.reduce((a,b)=>a+b)/arr.length;
-const preC1=avg(junSpAdj.slice(6,9));
-const durC1=avg(junSpAdj.slice(9,12));
-const posC1=avg(junSpAdj.slice(12,18));
-const preC2=avg(junSpAdj.slice(15,18));
-const durC2=avg(junSpAdj.slice(18,21));
-const posC2=avg(junSpAdj.slice(21,26));
-const ressacaData=[preC1,durC1,posC1,preC2,durC2,posC2];
-const ressacaColors=['rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)'];
+const preC1=avg(junSp.slice(6,9));
+const durC1=avg(junSp.slice(9,12));
+const posC1=avg(junSp.slice(12,18));
+const preC2=avg(junSp.slice(15,18));
+const durC2=avg(junSp.slice(18,21));
+const posC2=avg(junSp.slice(21,26));
+const rebote=avg(junSp.slice(26,30));
+const ressacaData=[preC1,durC1,posC1,preC2,durC2,posC2,rebote];
+const ressacaColors=['rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.45)'];
 new Chart(document.getElementById('cRessaca'),{
   type:'bar',
   data:{labels:ressacaLab,datasets:[{data:ressacaData,backgroundColor:ressacaColors,borderRadius:5}]},
@@ -368,9 +596,11 @@ new Chart(document.getElementById('cRessaca'),{
 
 const quedaC1=((posC1-preC1)/preC1*100).toFixed(1);
 const quedaC2=((posC2-preC2)/preC2*100).toFixed(1);
+const reboteVsPre=((rebote-preC2)/preC2*100).toFixed(1);
 document.getElementById('ressacaBox').innerHTML=`<strong>Confirmação do efeito ressaca em dois episódios:</strong><br>
-<strong>Campanha 1 (10–12/06):</strong> nos 3 dias de câmbio turbinado, a receita spoint médio diário foi de <strong>${fK(durC1)}</strong> — próxima da pré-campanha (${fK(preC1)}), porque os resgates puxaram consumo mas não foram capazes de romper o padrão. Nos 6 dias seguintes (13–18/06), a média despencou para <strong>${fK(posC1)}</strong> (${quedaC1}% vs. pré-campanha): usuários que resgataram no turbinado pararam de comprar na sequência.<br>
-<strong>Campanha 2 (19–21/06):</strong> o efeito foi mais agressivo. A receita spoint durante a campanha foi de ${fK(durC2)}, e nos 5 dias seguintes caiu para <strong>${fK(posC2)}</strong> (${quedaC2}% vs. pré-campanha). A hipótese se confirma: o câmbio turbinado antecipa consumo de pontos e cria um vácuo de receita nos dias seguintes. Para minimizar esse efeito, a campanha precisa ser calibrada em duração curta (1 dia, não 3) e com comunicação que converta o resgate em nova compra imediata.`;
+<strong>Campanha 1 (10–12/06):</strong> nos 3 dias de câmbio turbinado, a receita spoint média diária foi de <strong>${fK(durC1)}</strong> — próxima da pré-campanha (${fK(preC1)}), pois o incremento de resgates não foi suficiente para romper o patamar de receita estabelecido. Nos 6 dias seguintes (13–18/06), a média recuou para <strong>${fK(posC1)}</strong> (${quedaC1}% vs. pré-campanha), evidenciando que parte do consumo foi antecipado pelos dias promocionais.<br><br>
+<strong>Campanha 2 (19–21/06):</strong> o efeito foi mais pronunciado e revelou um comportamento adicional. A receita spoint <em>durante</em> a campanha foi de apenas <strong>${fK(durC2)}</strong> — abaixo da pré-campanha (${fK(preC2)}) — porque os usuários <strong>resgataram, mas não compraram imediatamente</strong>: acumularam o benefício do câmbio favorável sem converter em nova compra no mesmo momento. O efeito da campanha chegou <em>defasado</em>: nos 5 dias seguintes (22–26/06), a receita ficou em <strong>${fK(posC2)}</strong> (${quedaC2}% vs. pré-campanha), ainda sob influência do vácuo. Apenas no período 27–30/06 observa-se um rebote para <strong>${fK(rebote)}</strong>/dia — ainda ${Math.abs(parseFloat(reboteVsPre)).toFixed(1)}% abaixo do nível pré-campanha, mas com trajetória de recuperação visível.<br><br>
+<strong>Conclusão:</strong> o câmbio turbinado antecipa consumo de pontos e cria um vácuo de receita nos dias seguintes. O comportamento "tóxico" identificado é o usuário que passa a <em>acumular saldo</em> aguardando os dias promocionais, sem aumentar frequência de compra — o que inverte a lógica do programa. Para calibrar a alavanca: duração curta (1 dia é mais eficiente que 3), comunicação orientada a fechar nova compra no mesmo ato do resgate, e monitoramento dos dias subsequentes para confirmar rebote antes de repetir a ação.`;
 
 // ── SIMULADOR ──
 // Histórico real de resgates mensais: max ~236k (abr), min ~122k (jun), med ~200k excl jun
@@ -384,23 +614,23 @@ const normalResg=junResgArr.filter((_,i)=>!turbSet.has(i+1));
 const avgNormalResg=normalResg.reduce((a,b)=>a+b)/normalResg.length; // ~3.5k/dia normal
 const avgTurbResg=Array.from(turbSet).map(d=>junResgArr[d-1]).reduce((a,b)=>a+b)/turbSet.size; // ~14k/dia turb
 
-// Receita diária baseline (câmbio atual): média jun normal dias spoint
-const normalSpDias=junSpAdj.filter((_,i)=>!turbSet.has(i+1));
-const avgNormalSp=normalSpDias.reduce((a,b)=>a+b)/normalSpDias.length; // ~86k
+// Receita diária baseline (câmbio atual): média jun normal dias spoint (dados reais)
+const normalSpDias=junSp.filter((_,i)=>!turbSet.has(i+1));
+const avgNormalSp=normalSpDias.reduce((a,b)=>a+b)/normalSpDias.length;
 
 // Câmbios de referência
 const origAvg=(200/6+500/16+800/26)/3; // 31.8
 const novoAvg=(350/6+850/16+1300/26)/3; // 53.8
 const turbAvg=(275/6+675/16+1075/26)/3; // 42.0
-// Elasticidade receita: baseline atual (53.8 pts/R$) → 86k/dia
-// Original (31.8 pts/R$) → 117k/dia (mai 1-7 média)
-// Δ receita = (117-86)/86 = +36% com Δcâmbio = (31.8-53.8)/53.8 = -41%
-// elasticidade receita = -36/-41 = 0.88 (cada 1% de barateamento gera 0.88% de receita)
-// Vamos usar elast = 0.85 bidirecional
-const elastRec=0.85;
-// Elasticidade saldo: baseline atual 143k/mês
-// Original: mai pré ~228k/mês (jan-abr med)
-// Δsaldo = (228-143)/143 = +59% com Δcâmbio = -41% → elast vol saldo = 1.44
+
+// Baseline conservador: junho real foi R$2,85M spoint (~R$95k/dia)
+// O simulador na posição atual (câmbio 350/850/1300) deve projetar próximo desse valor
+// avgNormalSp já é a média dos dias normais de junho (~R$94k), usamos direto
+// Elasticidade revista: de 31.8 → 53.8 (+69%), receita foi de ~117k → ~95k (-19%)
+// elast receita = 19/69 = 0.27 — mais conservadora que o modelo anterior
+// Usamos 0.30 para dar margem, bidirecional
+const elastRec=0.30;
+// Elasticidade saldo: mantemos 1.44 (volume de resgates responde mais ao câmbio que receita)
 const elastSaldo=1.44;
 
 const budH2=[219780,231660,243540,255420,267300,279180];
@@ -519,3 +749,20 @@ function sim(){
 }
 sim();
 </script>
+
+<!-- ═══════════════════════════════════════
+     7. CONCLUSÃO GERAL
+═══════════════════════════════════════ -->
+<hr class="d">
+<div class="sec">Conclusão — leitura geral do H1 e direção para o H2</div>
+<div class="box b" style="font-size:13px;line-height:1.85">
+  <strong>O ajuste de câmbio foi necessário — mas foi desproporcional.</strong><br>
+  A mudança realizada em 07/05 teve caráter emergencial: o ritmo de resgates dos meses anteriores colocava o budget em risco de estouro recorrente, e era preciso agir. A decisão foi correta na direção, mas o tamanho do movimento — uma alta de ~69% no custo médio por ponto — foi além do necessário para reequilibrar o programa, e gerou um impacto financeiro negativo relevante na receita spoint que se estendeu por todo o restante do semestre.<br><br>
+  <strong>As ações corretivas evitaram uma queda ainda maior.</strong><br>
+  As campanhas de câmbio turbinado em junho funcionaram como válvula de alívio: reativaram parte do engajamento suprimido, sustentaram volume de resgates em momentos críticos e contribuíram para que o resultado total do mês fechasse acima do target. Sem essas ações, a queda de receita spoint seria mais acentuada. O mfit cumpriu papel semelhante — compensou parte da perda de receita orgânica e permitiu que o total consolidado se mantivesse competitivo.<br><br>
+  <strong>O desafio agora é corrigir o BAU.</strong><br>
+  O câmbio atual (350/850/1.300) está num nível que suprime o engajamento de forma estrutural. Não é sustentável operar com campanhas pontuais para compensar um câmbio de base que afasta o usuário — isso cria dependência de ações promocionais e o comportamento tóxico de acúmulo especulativo que já identificamos. O objetivo do próximo ajuste não é voltar ao câmbio original, mas encontrar um ponto de equilíbrio perene: um câmbio que mantenha o ROI saudável, respeite o budget de saldo e não exija intervenções frequentes para manter o programa ativo.<br><br>
+  <strong>O equilíbrio que buscamos é entre três variáveis:</strong> câmbio acessível o suficiente para engajar → volume de resgates dentro do budget autorizado → receita spoint que justifique o investimento em saldo. O ajuste que realizamos moveu demais no eixo do câmbio sem considerar o impacto em cadeia sobre as outras duas. A correção que vem a seguir tem que ser cirúrgica — e as outras alavancas já em andamento (mfit, CRM, mídia) podem operar em paralelo sem depender de um câmbio promocional para funcionar.
+</div>
+
+</div><!-- /wrap -->
