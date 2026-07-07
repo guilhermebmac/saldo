@@ -1,8 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Análise Spoint — Uso de Saldo</title>
+<style>
+  :root {
+    --surface-2: #ffffff;
+    --surface-1: #f7f6f3;
+    --surface-0: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --border: #e1e0d9;
+    --border-strong: #c3c2b7;
+    --radius: 8px;
+    --fill-primary: #2a78d6;
+    --on-primary: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 80px; }
+  h1 { font-size: 24px; font-weight: 600; margin: 0 0 8px; }
+  h2 { font-size: 19px; font-weight: 600; margin: 0 0 4px; }
+  .subtitle-top { color: var(--text-secondary); font-size: 14px; margin: 0 0 40px; }
+  section { margin-bottom: 56px; padding-top: 24px; border-top: 1px solid var(--border); }
+  section:first-of-type { border-top: none; padding-top: 0; }
+  select, button {
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  button { cursor: pointer; }
+  button:hover { background: var(--surface-1); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Análise Spoint — uso de saldo</h1>
+<p class="subtitle-top">Câmbio de pontos, cohort por perfil de comprador, evolução mensal do saldo, representatividade por tier e promotores x detratores do programa.</p>
+
+<section id="sec-cambio">
+  <h2>Câmbio Spoint — histórico H1 2026 e simulador de cenários</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Material conectado da análise de câmbio de pontos (custo por real), campanhas turbinadas, efeito ressaca e simulador de projeção H2 — mantido como produzido originalmente.</p>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans,sans-serif);color:var(--text-primary);font-size:14px}
-.wrap{padding:1rem 0}
+.cambio-wrap{padding:1rem 0}
 .sec{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:2rem 0 .75rem}
 .krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:.75rem}
 .krow3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:.75rem}
@@ -45,7 +100,7 @@ hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
 .sim-row{margin:.4rem 0;display:flex;justify-content:space-between;align-items:baseline}
 </style>
 
-<div class="wrap">
+<div class="cambio-wrap">
 
 <!-- ═══════════════════════════════════════
      0. HISTÓRICO JAN–JUN (DIÁRIO/SEMANAL)
@@ -171,8 +226,6 @@ hr.d{border:none;border-top:.5px solid var(--border);margin:1.75rem 0 .5rem}
   <div class="krow" id="simKpi" style="margin-top:1rem"></div>
   <div class="cw" style="height:220px;margin-top:.75rem"><canvas id="cSim" role="img" aria-label="Projeção H2 por mês"></canvas></div>
   <div class="box a" id="simMsg" style="margin-top:.6rem"></div>
-</div>
-
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -565,14 +618,14 @@ document.getElementById('roiBox').innerHTML=`<strong>Atenção — risco de gali
 // C1: pré 7-9 (idx 6,7,8), durante 10-12 (idx 9,10,11), pós 13-18 (idx 12..17)
 // C2: pré 16-18 (idx 15,16,17), durante 19-21 (idx 18,19,20), pós 22-26 (idx 21..25), rebote 27-30 (idx 26..29)
 const ressacaLab=['Pré C1\n(7-9/06)','Campanha C1\n(10-12/06)','Pós C1\n(13-18/06)','Pré C2\n(16-18/06)','Campanha C2\n(19-21/06)','Pós C2\n(22-26/06)','Rebote\n(27-30/06)'];
-const avg=(arr)=>arr.reduce((a,b)=>a+b)/arr.length;
-const preC1=avg(junSp.slice(6,9));
-const durC1=avg(junSp.slice(9,12));
-const posC1=avg(junSp.slice(12,18));
-const preC2=avg(junSp.slice(15,18));
-const durC2=avg(junSp.slice(18,21));
-const posC2=avg(junSp.slice(21,26));
-const rebote=avg(junSp.slice(26,30));
+const avgArr=(arr)=>arr.reduce((a,b)=>a+b)/arr.length;
+const preC1=avgArr(junSp.slice(6,9));
+const durC1=avgArr(junSp.slice(9,12));
+const posC1=avgArr(junSp.slice(12,18));
+const preC2=avgArr(junSp.slice(15,18));
+const durC2=avgArr(junSp.slice(18,21));
+const posC2=avgArr(junSp.slice(21,26));
+const rebote=avgArr(junSp.slice(26,30));
 const ressacaData=[preC1,durC1,posC1,preC2,durC2,posC2,rebote];
 const ressacaColors=['rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.6)','rgba(237,161,0,0.8)','rgba(227,73,72,0.7)','rgba(42,120,214,0.45)'];
 new Chart(document.getElementById('cRessaca'),{
@@ -597,10 +650,11 @@ new Chart(document.getElementById('cRessaca'),{
 const quedaC1=((posC1-preC1)/preC1*100).toFixed(1);
 const quedaC2=((posC2-preC2)/preC2*100).toFixed(1);
 const reboteVsPre=((rebote-preC2)/preC2*100).toFixed(1);
-document.getElementById('ressacaBox').innerHTML=`<strong>Confirmação do efeito ressaca em dois episódios:</strong><br>
-<strong>Campanha 1 (10–12/06):</strong> nos 3 dias de câmbio turbinado, a receita spoint média diária foi de <strong>${fK(durC1)}</strong> — próxima da pré-campanha (${fK(preC1)}), pois o incremento de resgates não foi suficiente para romper o patamar de receita estabelecido. Nos 6 dias seguintes (13–18/06), a média recuou para <strong>${fK(posC1)}</strong> (${quedaC1}% vs. pré-campanha), evidenciando que parte do consumo foi antecipado pelos dias promocionais.<br><br>
-<strong>Campanha 2 (19–21/06):</strong> o efeito foi mais pronunciado e revelou um comportamento adicional. A receita spoint <em>durante</em> a campanha foi de apenas <strong>${fK(durC2)}</strong> — abaixo da pré-campanha (${fK(preC2)}) — porque os usuários <strong>resgataram, mas não compraram imediatamente</strong>: acumularam o benefício do câmbio favorável sem converter em nova compra no mesmo momento. O efeito da campanha chegou <em>defasado</em>: nos 5 dias seguintes (22–26/06), a receita ficou em <strong>${fK(posC2)}</strong> (${quedaC2}% vs. pré-campanha), ainda sob influência do vácuo. Apenas no período 27–30/06 observa-se um rebote para <strong>${fK(rebote)}</strong>/dia — ainda ${Math.abs(parseFloat(reboteVsPre)).toFixed(1)}% abaixo do nível pré-campanha, mas com trajetória de recuperação visível.<br><br>
-<strong>Conclusão:</strong> o câmbio turbinado antecipa consumo de pontos e cria um vácuo de receita nos dias seguintes. O comportamento "tóxico" identificado é o usuário que passa a <em>acumular saldo</em> aguardando os dias promocionais, sem aumentar frequência de compra — o que inverte a lógica do programa. Para calibrar a alavanca: duração curta (1 dia é mais eficiente que 3), comunicação orientada a fechar nova compra no mesmo ato do resgate, e monitoramento dos dias subsequentes para confirmar rebote antes de repetir a ação.`;
+document.getElementById('ressacaBox').innerHTML=`<strong>O que os dois episódios mostram — e o que não conseguimos confirmar:</strong><br>
+<strong>Campanha 1 (10–12/06):</strong> durante os 3 dias de câmbio turbinado, a receita spoint média diária foi de <strong>${fK(durC1)}</strong> — ligeiramente acima da pré-campanha (${fK(preC1)}). Nos 6 dias seguintes (13–18/06), a média recuou para <strong>${fK(posC1)}</strong> (${quedaC1}% vs. pré-campanha).<br><br>
+<strong>Campanha 2 (19–21/06):</strong> durante a campanha, a receita foi de <strong>${fK(durC2)}</strong> — abaixo da pré-campanha (${fK(preC2)}). Nos 5 dias seguintes (22–26/06), ficou em <strong>${fK(posC2)}</strong> (${quedaC2}% vs. pré-campanha). Só no período 27–30/06 há um rebote para <strong>${fK(rebote)}</strong>/dia, ainda ${Math.abs(parseFloat(reboteVsPre)).toFixed(1)}% abaixo do nível pré-campanha.<br><br>
+<strong>Leitura cautelosa:</strong> os dois episódios têm resultados opostos entre si — na Campanha 1 a receita durante a ação foi levemente maior que a pré-campanha; na Campanha 2, foi menor. Essa inconsistência é o dado mais importante aqui: não dá para afirmar com confiança que o câmbio turbinado é uma alavanca causal e definitiva de receita. O resultado observado pode estar mais associado a fatores concorrentes no período (outras ofertas, sazonalidade, dia da semana) do que ao câmbio turbinado em si — ou seja, o saldo pode estar funcionando mais como "estar no lugar certo, na hora certa" do que como motor independente de receita.<br><br>
+<strong>Implicação prática:</strong> sem uma política de expiração de pontos definida, campanhas turbinadas tendem a apenas antecipar o momento do resgate — o usuário que resgataria de qualquer forma resgata mais cedo — sem necessariamente criar demanda nova. Olhando exclusivamente pela receita, a campanha turbinada não se paga por si só de forma comprovada. O valor dela, hoje, está mais em engajamento e percepção de valor do programa do que em ganho de receita incremental garantido. Recomendação: tratar campanhas turbinadas como ferramenta de engajamento e comunicação — não como alavanca de receita — até existir uma política de expiração de pontos que sustente a tese de antecipação de consumo real, com um teste controlado (grupo com campanha vs. grupo sem) para isolar o efeito de forma mais confiável.`;
 
 // ── SIMULADOR ──
 // Histórico real de resgates mensais: max ~236k (abr), min ~122k (jun), med ~200k excl jun
@@ -765,4 +819,1203 @@ sim();
   <strong>O equilíbrio que buscamos é entre três variáveis:</strong> câmbio acessível o suficiente para engajar → volume de resgates dentro do budget autorizado → receita spoint que justifique o investimento em saldo. O ajuste que realizamos moveu demais no eixo do câmbio sem considerar o impacto em cadeia sobre as outras duas. A correção que vem a seguir tem que ser cirúrgica — e as outras alavancas já em andamento (mfit, CRM, mídia) podem operar em paralelo sem depender de um câmbio promocional para funcionar.
 </div>
 
-</div><!-- /wrap -->
+</div><!-- /cambio-wrap -->
+
+</section>
+
+<section id="sec-cohort">
+  <h2>Cohort Spoint por perfil de comprador — uso de saldo</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Trajetória mês a mês antes e depois do primeiro uso de saldo, com análise automática por métrica e perfil.</p>
+
+  <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
+    <select id="cohort-metrica">
+      <option value="retencao">Retenção</option>
+      <option value="frequencia">Frequência</option>
+      <option value="receita">Receita</option>
+      <option value="spending">Spending</option>
+      <option value="ticket">Ticket médio</option>
+    </select>
+    <select id="cohort-perfil">
+      <option value="DIGITAL EXCLUSIVO">Digital exclusivo</option>
+      <option value="OMNICANAL (HÍBRIDO)">Omnicanal (híbrido)</option>
+    </select>
+    <span id="cohort-subtitle" style="font-size:12px; color:var(--text-muted);"></span>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; font-size:12px; color:var(--text-secondary);">
+    <span id="cohort-legend-min">baixo</span>
+    <div id="cohort-legend-bar" style="width:140px; height:10px; border-radius:4px;"></div>
+    <span id="cohort-legend-max">alto</span>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <div id="cohort-grid"></div>
+  </div>
+
+  <div id="cohort-analysis" style="margin-top:16px; padding:12px 14px; background:var(--surface-1); border-radius:var(--radius); font-size:13px; line-height:1.65; color:var(--text-primary);"></div>
+</section>
+
+<section id="sec-mom">
+  <h2>Evolução mensal do saldo (jan/2025 a jun/2026)</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Saldo emitido vs. gasto, percentuais de uso e resgate sobre venda, alavancagem de GMV e composição da receita influenciada.</p>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:600; color:var(--text-primary);">Saldo emitido vs. gasto (R$)</div>
+  <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:8px; font-size:12px; color:var(--text-secondary);">
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#2a78d6;"></span>Emitido</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#e34948;"></span>Gasto</span>
+  </div>
+  <div style="position:relative; width:100%; height:220px; margin-bottom:32px;">
+    <canvas id="mom-chart1" role="img" aria-label="Linha comparando saldo emitido e saldo gasto por mês">Saldo gasto tem pico em novembro de 2025, superando o emitido no mês.</canvas>
+  </div>
+  <p style="font-size:13px; color:var(--text-secondary); margin:0 0 32px; line-height:1.6;">Emitido e gasto seguem patamares parecidos na maior parte do período (R$ 120k–290k/mês). <strong>Novembro/2025 é um outlier claro</strong>: o gasto salta para R$ 1,27M — quase 4x a média — e supera o próprio valor emitido no mês (R$ 340k), o que só é possível se usuários estiverem resgatando saldo acumulado em meses anteriores, não apenas o emitido naquele mês.</p>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:600; color:var(--text-primary);">% uso de saldo e % resgate sobre a venda</div>
+  <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:8px; font-size:12px; color:var(--text-secondary);">
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#2a78d6;"></span>% uso saldo / venda</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#eda100;"></span>% resgate / venda</span>
+  </div>
+  <div style="position:relative; width:100%; height:220px; margin-bottom:32px;">
+    <canvas id="mom-chart2" role="img" aria-label="Linha comparando percentual de uso de saldo e percentual de resgate sobre a venda por mês">Uso de saldo sobre venda varia de 5,65% a 34,03%, com pico em novembro de 2025. Resgate sobre venda é mais estável, entre 4,42% e 10,97%.</canvas>
+  </div>
+  <p style="font-size:13px; color:var(--text-secondary); margin:0 0 32px; line-height:1.6;">O % de uso de saldo sobre venda acompanha o mesmo pico de novembro/2025 (34,03%, quase 4x a média de ~11%). O % de resgate sobre venda é bem mais estável (4,4%–11%) e <strong>não</strong> acompanha esse pico — isso confirma que novembro foi puxado por uso de saldo em pedidos específicos, não por um evento de resgate em massa.</p>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:600; color:var(--text-primary);">Alavancagem de GMV por real emitido em saldo</div>
+  <div style="position:relative; width:100%; height:220px; margin-bottom:32px;">
+    <canvas id="mom-chart3" role="img" aria-label="Barras mostrando quantos reais de GMV são gerados para cada real de saldo emitido, por mês">Alavancagem varia entre 9,11 e 22,65 reais de GMV por real emitido.</canvas>
+  </div>
+  <p style="font-size:13px; color:var(--text-secondary); margin:0 0 32px; line-height:1.6;">A alavancagem varia entre <strong>R$ 9,11</strong> (dez/2025) e <strong>R$ 22,65</strong> (jun/2025) de GMV por real emitido. Os menores valores coincidem justamente com os meses de maior gasto de saldo (nov e dez/2025) — reforçando que picos de uso vêm acompanhados de queda na eficiência de conversão de saldo emitido em GMV.</p>
+
+</section>
+
+<section id="sec-tier">
+  <h2>Representatividade de uso de saldo por tier de lucratividade</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin:0 0 16px;">Percentual de clientes que usam saldo vs. percentual da receita que geram, com índice de representatividade, valores absolutos por tier, e LTV por faixa de uso selecionável por tier.</p>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:600; color:var(--text-primary);">Representatividade de clientes vs. receita, com índice em linha</div>
+  <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:8px; font-size:12px; color:var(--text-secondary);">
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#2a78d6;"></span>% clientes que usam saldo</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#1baf7a;"></span>% receita gerada por eles</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:14px; height:2px; background:#e34948;"></span>Índice (receita% ÷ clientes%)</span>
+  </div>
+  <div style="position:relative; width:100%; height:300px; margin-bottom:20px;">
+    <canvas id="tier-chart1" role="img" aria-label="Gráfico combinado de barras e linha comparando percentual de clientes e receita por tier de lucratividade, com índice no eixo secundário">Top 10% tem o maior índice, 1,11. Bottom 10% cai para 0,93.</canvas>
+  </div>
+  <p style="font-size:13px; color:var(--text-secondary); margin:0 0 20px; line-height:1.6;">Nos tiers <strong>Top 10% a Top 50%</strong>, o índice fica acima de 1,0: usuários de saldo geram receita desproporcional ao seu peso em clientes (destaque para o Top 10%, índice 1,11 — são 23,7% dos clientes e geram 26,3% da receita). Nos tiers <strong>Top 75% e Top 90%</strong> a representatividade é praticamente neutra (índice ≈ 1,00). No <strong>Bottom 10%</strong>, o índice cai para 0,93 — aqui, usuários de saldo geram receita proporcionalmente <strong>menor</strong> que seu peso em clientes.</p>
+
+  <div style="margin-bottom:32px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border-strong);">
+          <th style="text-align:left; padding:8px 10px; color:var(--text-secondary); font-weight:600;">Tier</th>
+          <th style="text-align:right; padding:8px 10px; color:var(--text-secondary); font-weight:600;">Qtd. clientes</th>
+          <th style="text-align:right; padding:8px 10px; color:var(--text-secondary); font-weight:600;">Receita total (R$)</th>
+          <th style="text-align:right; padding:8px 10px; color:var(--text-secondary); font-weight:600;">Saldo utilizado (R$)</th>
+          <th style="text-align:right; padding:8px 10px; color:var(--text-secondary); font-weight:600;">LTV médio (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="tier-summary-table"></tbody>
+    </table>
+    <p style="font-size:13px; color:var(--text-secondary); margin:12px 0 0; line-height:1.6;">A tabela evidencia a concentração de valor entre tiers: o <strong>Top 10%</strong> tem apenas 33.151 clientes (tamanho de base parecido com o Bottom 10%, 33.154) mas gera <strong>R$ 96,6M</strong> em receita — quase <strong>49x o LTV médio</strong> do Bottom 10% (R$ 2.914 vs. R$ 60). O saldo utilizado no Top 10% (R$ 2,36M) é quase <strong>19x</strong> o do Bottom 10% (R$ 127k), proporcional à diferença de receita entre os dois grupos.</p>
+  </div>
+
+  <div style="margin-bottom:8px; font-size:13px; font-weight:600; color:var(--text-primary);">LTV médio e quantidade de clientes por faixa de uso de saldo</div>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;" id="tier-buttons"></div>
+  <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:8px; font-size:12px; color:var(--text-secondary);">
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:2px; background:#2a78d6;"></span>Qtd. clientes (barra)</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:14px; height:2px; background:#e34948;"></span>LTV médio (linha)</span>
+  </div>
+  <div style="position:relative; width:100%; height:300px;">
+    <canvas id="tier-chart2" role="img" aria-label="Gráfico combinado de barras de quantidade de clientes e linha de LTV médio por faixa de uso de saldo, para o tier selecionado">Quantidade de clientes por faixa de uso, com LTV médio em linha, selecionável por tier de lucratividade.</canvas>
+  </div>
+  <div id="tier-chart2-analysis" style="font-size:13px; color:var(--text-secondary); margin-top:12px; line-height:1.6;"></div>
+</section>
+
+<section id="sec-conclusao">
+  <h2>Conclusão — o saldo funciona?</h2>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">O saldo não se comporta de forma uniforme — ele funciona de maneiras opostas dependendo do tier de valor do cliente, e essa diferença é o achado mais importante de toda a análise.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:24px 0 8px;">1. Nos tiers de alto valor (Top 10% a Top 50%), o saldo é um motor genuíno de receita e retenção</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">O índice de representatividade de receita fica consistentemente acima de 1,0 (Top 10%: 1,11) — usuários de saldo geram mais receita do que seu peso em clientes sugeriria. O LTV de quem usa saldo é maior que o de quem nunca usou, em todas as faixas de uso dentro do Top 10%, sem excessão. Aqui a receita adicional parece genuína, não apenas reciclagem de desconto.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:24px 0 8px;">2. Nos tiers de baixo valor (Top 90%, Bottom 10%), o saldo parece mecânica de resgate, não de crescimento</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">O índice cai para 0,93 no Bottom 10%. No Bottom 10%, quem usa mais de 30% do saldo tem LTV menor (R$ 52) que quem nunca usou (R$ 60) — o único ponto em todo o dataset onde uso intenso de saldo correlaciona com destruição de valor, não criação.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:24px 0 8px;">3. No agregado mensal, a eficiência cai exatamente quando o uso sobe</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">A alavancagem (GMV por real emitido) tem correlação inversa com o % de uso sobre venda: os meses de menor eficiência (dez/2025: R$ 9,11; nov/2025: R$ 10,98) são os de maior uso (34% e 15%). Historicamente, quando o uso de saldo cresce, a eficiência de conversão cai — não é neutro.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:24px 0 8px;">Respondendo direto: retenção, receita, ou os dois?</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 6px;"><strong>É mecânica de retenção/engajamento?</strong> Sim, com evidência forte — frequência e retenção sobem no pós-saldo de forma consistente entre tiers.</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 6px;"><strong>É mecânica de receita?</strong> Depende do tier. Nos tiers altos, sim — a receita extra que o saldo gera é maior do que o saldo gasto para gerar ela. Nos tiers baixos, não — a receita adicional não compensa proporcionalmente a base de clientes que ela mobiliza.</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;"><strong>Deixar o saldo mais acessível aumenta receita ou queima margem?</strong> Com a composição atual de uso, queimar margem é o cenário mais provável se a expansão for indiscriminada — o padrão histórico mostra que aumento de uso vem acompanhado de queda de eficiência, e que o under-index de receita está concentrado justo nos segmentos de menor valor, que tendem a ser os mais sensíveis a maior acessibilidade. Ou seja: <strong>precisamos de segmentação para o uso adequado do saldo</strong> — acessibilidade não deveria ser uma alavanca única para toda a base.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:24px 0 8px;">Limitações e um aprendizado — o que estes dados não provam, e o que já podemos agir</p>
+  <ul style="font-size:14px; line-height:1.7; margin:0 0 16px; padding-left:20px;">
+    <li><strong>Causalidade</strong>: não é possível saber se o saldo torna o cliente Top 10% mais valioso, ou se clientes já mais valiosos simplesmente usam mais saldo (autosseleção). Isso exigiria um teste controlado por tier.</li>
+    <li><strong>Novembro/2025 foi Black Friday</strong> — o que explica o pico de uso (34%) e a queda de alavancagem (R$ 10,98). É um outlier que deve ser olhado de forma apartada do restante da série, com ações corretivas específicas para a próxima BF a serem definidas — o desenho dessas ações não é o foco desta análise.</li>
+  </ul>
+
+</section>
+
+<section id="sec-promotores">
+  <h2>Promotores x Detratores do programa de saldo</h2>
+  <p style="color:var(--text-muted); font-size:13px; margin:0 0 20px;">Comparação de magnitude entre quem usa saldo de forma lucrativa para o negócio (promotores) e quem usa de forma marginal ou levemente negativa (detratores) — para calibrar se o ofensor identificado justifica mudança estratégica.</p>
+
+  <div class="krow" style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:24px;">
+    <div class="k" style="border-left:3px solid #1baf7a;">
+      <div class="kl">Promotores — usuários de saldo nos tiers Top 10% a Top 50%</div>
+      <div class="kv pos">R$ 38,98M em receita</div>
+      <div class="ks">22.206 clientes · R$ 4,19M de saldo consumido · receita 231x maior que a dos detratores</div>
+    </div>
+    <div class="k" style="border-left:3px solid #e34948;">
+      <div class="kl">Detratores — usuários de saldo no Bottom 10% (uso de saldo, todas as faixas)</div>
+      <div class="kv neg">R$ 168 mil em receita</div>
+      <div class="ks">3.021 clientes · R$ 126,6 mil de saldo consumido · LTV médio na faixa mais pesada (acima de 30%) abaixo de quem nunca usou saldo</div>
+    </div>
+  </div>
+
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">Os promotores (usuários de saldo nos tiers Top 10%, 25% e 50%) geram <strong>R$ 38,98 milhões</strong> em receita acumulada, consumindo <strong>R$ 4,19 milhões</strong> em saldo — uma base de 22.206 clientes. Os detratores (toda a base que usa saldo no Bottom 10%, o único segmento onde identificamos uso intenso correlacionado com LTV menor que quem nunca usou) somam apenas <strong>R$ 168 mil</strong> em receita e <strong>R$ 126,6 mil</strong> de saldo consumido, numa base de 3.021 clientes.</p>
+
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">Em outras palavras: os promotores geram <strong>231x mais receita</strong> e consomem <strong>33x mais saldo</strong> do que os detratores — mas em troca de uma receita ordens de magnitude maior. O volume de saldo "desperdiçado" nos detratores (R$ 126,6 mil) é pequeno mesmo frente ao gasto mensal médio de saldo da empresa como um todo (entre R$ 200 mil e R$ 1,27 milhão/mês, conforme a evolução mensal). Isso reforça a leitura da recomendação: <strong>o ofensor existe, é real e está documentado, mas sua magnitude não justifica uma mudança estratégica no desenho do programa</strong> — o custo de reprimir o saldo para toda a base, para conter um ofensor dessa escala, tende a ser maior do que o benefício de contê-lo.</p>
+
+  <p style="font-size:14px; line-height:1.7; margin:16px 0 16px;"><strong>ROI dos promotores: R$ 38,98M ÷ R$ 4,19M = 9,3x</strong> de receita gerada para cada real de saldo consumido pelos usuários mais valiosos — abaixo do equilíbrio saudável de referência (14x) usado na seção de câmbio. Isso contextualiza o desafio real: estamos corrigindo um histórico em que o câmbio de troca era mais permissivo — mais favorável ao usuário e, na mesma medida, mais caro para a empresa. <strong>O objetivo não é voltar a esse patamar permissivo, nem reprimir o saldo pelo ofensor marginal do Bottom 10% — é calibrar o câmbio para que o ROI dos promotores se aproxime do equilíbrio saudável (14x), sem sufocar o engajamento que hoje sustenta receita e retenção nos tiers de maior valor. É esse o desafio de equilíbrio central: nem o câmbio permissivo do passado, nem uma repressão que mate o saldo — um meio-termo que sustente o ROI.</strong></p>
+
+  <p style="font-size:13px; color:var(--text-muted); margin:0;">Cálculo: promotores = soma das faixas de uso de saldo (1 a 6, excluindo "nunca usou") nos tiers Top 10%, Top 25% e Top 50%. Detratores = soma de todas as faixas de uso de saldo (1 a 6) no tier Bottom 10%, que é o único segmento com evidência de LTV inferior ao de quem nunca usou saldo na faixa de uso mais intensa.</p>
+</section>
+
+<section id="sec-conclusao-geral">
+  <h2>Conclusão geral — o câmbio atual está suprimindo demanda?</h2>
+
+  <p style="font-size:14px; font-weight:600; margin:0 0 8px;">Sim, tudo indica que sim.</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">A receita spoint diária caiu ~25% e o volume de resgates caiu ~55% depois do ajuste de câmbio de 07/05 (+69% no custo médio por ponto) — uma queda de engajamento relevante para conter o estouro de budget que motivou o ajuste.</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;"><strong>Ressalva sobre o ROI dos promotores:</strong> o 9,3x foi calculado sobre todo o período analisado, misturando dados de antes e depois do ajuste de câmbio — não é uma medida isolada do pós-ajuste. Por isso, não podemos afirmar com esse número se o ROI já melhorou desde 07/05 ou não. Para responder isso com precisão, seria necessário um recorte específico do período pós-ajuste, que ainda não fizemos nesta análise.</p>
+
+  <p style="font-size:14px; font-weight:600; margin:0 0 8px;">Se afrouxarmos um pouco o câmbio, a receita deveria subir de forma saudável?</p>
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;">O modelo de elasticidade já usado no simulador (seção de câmbio) foi calibrado com os próprios dados do H1: um aumento de 69% no câmbio produziu uma queda de ~19% na receita. Aplicando essa mesma relação na direção inversa, afrouxar parcialmente o câmbio — sem voltar ao patamar permissivo original — deveria recuperar parte dessa receita perdida de forma proporcional. Isso é consistente com o ROI dos promotores estar abaixo do saudável: ainda há espaço para tornar o saldo mais atrativo sem comprometer a margem, desde que o movimento seja gradual e monitorado.</p>
+
+  <p style="font-size:14px; line-height:1.7; margin:0 0 16px;"><strong>Ressalva:</strong> essa é uma inferência baseada em modelo de elasticidade e correlação histórica, não um teste controlado. O ideal seria testar de forma incremental, ajustando um único tier de câmbio por vez e monitorando ROI e receita por algumas semanas antes do próximo passo — mas isso não é operacionalmente possível hoje, os três tiers precisam ser ajustados em conjunto. Sendo assim, o caminho viável é o ajuste gradual em magnitude: mover os três tiers juntos, mas em incrementos menores e monitorados, em vez de um salto abrupto como o de 07/05.</p>
+</section>
+
+<section id="sec-fechamento">
+  <h2>Fechamento — recomendação prática com o que já temos disponível hoje</h2>
+  <p style="font-size:14px; line-height:1.7; margin:0;">Sem mudança de desenvolvimento no curto prazo, a leitura com as informações que já existem é a seguinte: o saldo tem ofensores identificados no seu uso (Bottom 10% e, em menor grau, Top 90%), mas esses ofensores são pequenos demais, em volume de clientes e de receita, para justificar uma mudança estratégica no programa. Olhando o conjunto — cohort, evolução mensal, representatividade por tier, câmbio e ROI — o saldo hoje <strong>faz mais bem do que mal</strong> ao programa: ele sustenta frequência e retenção de forma consistente, e a receita adicional que gera nos segmentos de maior peso (Top 10–50%) supera, em ordens de magnitude, o que se perde nos segmentos de menor valor. A recomendação prática é <strong>manter o saldo em um patamar de câmbio atrativo</strong>, tratando-o como alavanca de negócio e de melhora de receita, em vez de restringi-lo pensando apenas no ofensor marginal.</p>
+</section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+try {
+
+/* ===================== SECTION 1: COHORT POR PERFIL ===================== */
+
+var rowsB = [
+["2025-06","DIGITAL EXCLUSIVO","-12","597","24","34","7138.68","0.0402","1.42","297.45","209.96"],
+["2025-06","OMNICANAL (HÍBRIDO)","-12","709","122","186","33907.38","0.1721","1.52","277.93","182.3"],
+["2025-06","DIGITAL EXCLUSIVO","-11","597","31","39","8924.14","0.0519","1.26","287.88","228.82"],
+["2025-06","OMNICANAL (HÍBRIDO)","-11","709","106","162","31914.09","0.1495","1.53","301.08","197"],
+["2025-06","DIGITAL EXCLUSIVO","-10","597","29","33","10727.91","0.0486","1.14","369.93","325.09"],
+["2025-06","OMNICANAL (HÍBRIDO)","-10","709","105","150","30046.12","0.1481","1.43","286.15","200.31"],
+["2025-06","DIGITAL EXCLUSIVO","-9","597","16","17","6534.49","0.0268","1.06","408.41","384.38"],
+["2025-06","OMNICANAL (HÍBRIDO)","-9","709","91","157","28901.26","0.1283","1.73","317.6","184.08"],
+["2025-06","DIGITAL EXCLUSIVO","-8","597","28","30","8535.17","0.0469","1.07","304.83","284.51"],
+["2025-06","OMNICANAL (HÍBRIDO)","-8","709","112","163","26533.98","0.158","1.46","236.91","162.79"],
+["2025-06","DIGITAL EXCLUSIVO","-7","597","51","68","19722.99","0.0854","1.33","386.73","290.04"],
+["2025-06","OMNICANAL (HÍBRIDO)","-7","709","152","255","53914.29","0.2144","1.68","354.7","211.43"],
+["2025-06","DIGITAL EXCLUSIVO","-6","597","47","54","15582.68","0.0787","1.15","331.55","288.57"],
+["2025-06","OMNICANAL (HÍBRIDO)","-6","709","149","239","40622.13","0.2102","1.6","272.63","169.97"],
+["2025-06","DIGITAL EXCLUSIVO","-5","597","35","45","10704.34","0.0586","1.29","305.84","237.87"],
+["2025-06","OMNICANAL (HÍBRIDO)","-5","709","133","207","37095.3","0.1876","1.56","278.91","179.2"],
+["2025-06","DIGITAL EXCLUSIVO","-4","597","42","50","13985.92","0.0704","1.19","333","279.72"],
+["2025-06","OMNICANAL (HÍBRIDO)","-4","709","117","181","41252.66","0.165","1.55","352.59","227.92"],
+["2025-06","DIGITAL EXCLUSIVO","-3","597","54","70","21983.03","0.0905","1.3","407.09","314.04"],
+["2025-06","OMNICANAL (HÍBRIDO)","-3","709","151","238","49718.88","0.213","1.58","329.26","208.9"],
+["2025-06","DIGITAL EXCLUSIVO","-2","597","54","61","18330.65","0.0905","1.13","339.46","300.5"],
+["2025-06","OMNICANAL (HÍBRIDO)","-2","709","154","265","52473.42","0.2172","1.72","340.74","198.01"],
+["2025-06","DIGITAL EXCLUSIVO","-1","597","86","114","35011.86","0.1441","1.33","407.11","307.12"],
+["2025-06","OMNICANAL (HÍBRIDO)","-1","709","210","376","90344.98","0.2962","1.79","430.21","240.28"],
+["2025-06","DIGITAL EXCLUSIVO","0","597","577","785","230045.49","0.9665","1.36","398.69","293.05"],
+["2025-06","OMNICANAL (HÍBRIDO)","0","709","692","1326","296447.79","0.976","1.92","428.39","223.57"],
+["2025-06","DIGITAL EXCLUSIVO","1","597","80","148","24823.77","0.134","1.85","310.3","167.73"],
+["2025-06","OMNICANAL (HÍBRIDO)","1","709","213","438","66777.52","0.3004","2.06","313.51","152.46"],
+["2025-06","DIGITAL EXCLUSIVO","2","597","63","163","43819.96","0.1055","2.59","695.55","268.83"],
+["2025-06","OMNICANAL (HÍBRIDO)","2","709","182","322","51178.29","0.2567","1.77","281.2","158.94"],
+["2025-06","DIGITAL EXCLUSIVO","3","597","52","98","17181.34","0.0871","1.88","330.41","175.32"],
+["2025-06","OMNICANAL (HÍBRIDO)","3","709","154","257","42421.77","0.2172","1.67","275.47","165.07"],
+["2025-06","DIGITAL EXCLUSIVO","4","597","68","136","34791.27","0.1139","2","511.64","255.82"],
+["2025-06","OMNICANAL (HÍBRIDO)","4","709","158","254","45828.56","0.2228","1.61","290.05","180.43"],
+["2025-06","DIGITAL EXCLUSIVO","5","597","101","157","31183.34","0.1692","1.55","308.75","198.62"],
+["2025-06","OMNICANAL (HÍBRIDO)","5","709","184","327","63393.1","0.2595","1.78","344.53","193.86"],
+["2025-06","DIGITAL EXCLUSIVO","6","597","83","117","24758.78","0.139","1.41","298.3","211.61"],
+["2025-06","OMNICANAL (HÍBRIDO)","6","709","208","387","71228.27","0.2934","1.86","342.44","184.05"],
+["2025-06","DIGITAL EXCLUSIVO","7","597","56","60","11442.21","0.0938","1.07","204.33","190.7"],
+["2025-06","OMNICANAL (HÍBRIDO)","7","709","162","266","42962.44","0.2285","1.64","265.2","161.51"],
+["2025-06","DIGITAL EXCLUSIVO","8","597","53","70","15492.42","0.0888","1.32","292.31","221.32"],
+["2025-06","OMNICANAL (HÍBRIDO)","8","709","142","244","39710.96","0.2003","1.72","279.65","162.75"],
+["2025-06","DIGITAL EXCLUSIVO","9","597","58","73","19976.32","0.0972","1.26","344.42","273.65"],
+["2025-06","OMNICANAL (HÍBRIDO)","9","709","162","278","47704.29","0.2285","1.72","294.47","171.6"],
+["2025-07","DIGITAL EXCLUSIVO","-12","548","30","37","8322.37","0.0547","1.23","277.41","224.93"],
+["2025-07","OMNICANAL (HÍBRIDO)","-12","721","103","181","39777.74","0.1429","1.76","386.19","219.77"],
+["2025-07","DIGITAL EXCLUSIVO","-11","548","32","40","9588.27","0.0584","1.25","299.63","239.71"],
+["2025-07","OMNICANAL (HÍBRIDO)","-11","721","91","133","28913.01","0.1262","1.46","317.73","217.39"],
+["2025-07","DIGITAL EXCLUSIVO","-10","548","24","29","5495.41","0.0438","1.21","228.98","189.5"],
+["2025-07","OMNICANAL (HÍBRIDO)","-10","721","80","109","26192.66","0.111","1.36","327.41","240.3"],
+["2025-07","DIGITAL EXCLUSIVO","-9","548","27","35","12596.16","0.0493","1.3","466.52","359.89"],
+["2025-07","OMNICANAL (HÍBRIDO)","-9","721","93","132","25990.38","0.129","1.42","279.47","196.9"],
+["2025-07","DIGITAL EXCLUSIVO","-8","548","46","67","21383.79","0.0839","1.46","464.87","319.16"],
+["2025-07","OMNICANAL (HÍBRIDO)","-8","721","153","249","61363.66","0.2122","1.63","401.07","246.44"],
+["2025-07","DIGITAL EXCLUSIVO","-7","548","38","49","12531.48","0.0693","1.29","329.78","255.74"],
+["2025-07","OMNICANAL (HÍBRIDO)","-7","721","148","221","49262.7","0.2053","1.49","332.86","222.91"],
+["2025-07","DIGITAL EXCLUSIVO","-6","548","37","44","9274.86","0.0675","1.19","250.67","210.79"],
+["2025-07","OMNICANAL (HÍBRIDO)","-6","721","138","204","41917.71","0.1914","1.48","303.75","205.48"],
+["2025-07","DIGITAL EXCLUSIVO","-5","548","31","45","9657.44","0.0566","1.45","311.53","214.61"],
+["2025-07","OMNICANAL (HÍBRIDO)","-5","721","114","167","37857.77","0.1581","1.46","332.09","226.69"],
+["2025-07","DIGITAL EXCLUSIVO","-4","548","44","54","15662.28","0.0803","1.23","355.96","290.04"],
+["2025-07","OMNICANAL (HÍBRIDO)","-4","721","139","213","59532.09","0.1928","1.53","428.29","279.49"],
+["2025-07","DIGITAL EXCLUSIVO","-3","548","43","52","19353.2","0.0785","1.21","450.07","372.18"],
+["2025-07","OMNICANAL (HÍBRIDO)","-3","721","147","217","61393.11","0.2039","1.48","417.64","282.92"],
+["2025-07","DIGITAL EXCLUSIVO","-2","548","58","72","21870.1","0.1058","1.24","377.07","303.75"],
+["2025-07","OMNICANAL (HÍBRIDO)","-2","721","159","266","61925.57","0.2205","1.67","389.47","232.8"],
+["2025-07","DIGITAL EXCLUSIVO","-1","548","67","79","31897.22","0.1223","1.18","476.08","403.76"],
+["2025-07","OMNICANAL (HÍBRIDO)","-1","721","187","324","91327.63","0.2594","1.73","488.38","281.88"],
+["2025-07","DIGITAL EXCLUSIVO","0","548","532","745","177779.67","0.9708","1.4","334.17","238.63"],
+["2025-07","OMNICANAL (HÍBRIDO)","0","721","699","1285","319770.79","0.9695","1.84","457.47","248.85"],
+["2025-07","DIGITAL EXCLUSIVO","1","548","92","128","22459.47","0.1679","1.39","244.12","175.46"],
+["2025-07","OMNICANAL (HÍBRIDO)","1","721","217","379","56924.98","0.301","1.75","262.33","150.2"],
+["2025-07","DIGITAL EXCLUSIVO","2","548","63","79","18920.6","0.115","1.25","300.33","239.5"],
+["2025-07","OMNICANAL (HÍBRIDO)","2","721","168","286","53613.69","0.233","1.7","319.13","187.46"],
+["2025-07","DIGITAL EXCLUSIVO","3","548","73","91","22840.42","0.1332","1.25","312.88","250.99"],
+["2025-07","OMNICANAL (HÍBRIDO)","3","721","189","341","54144.79","0.2621","1.8","286.48","158.78"],
+["2025-07","DIGITAL EXCLUSIVO","4","548","85","107","26648.33","0.1551","1.26","313.51","249.05"],
+["2025-07","OMNICANAL (HÍBRIDO)","4","721","203","369","84842.2","0.2816","1.82","417.94","229.92"],
+["2025-07","DIGITAL EXCLUSIVO","5","548","65","81","17755.16","0.1186","1.25","273.16","219.2"],
+["2025-07","OMNICANAL (HÍBRIDO)","5","721","214","327","67640.05","0.2968","1.53","316.08","206.85"],
+["2025-07","DIGITAL EXCLUSIVO","6","548","65","71","12998.64","0.1186","1.09","199.98","183.08"],
+["2025-07","OMNICANAL (HÍBRIDO)","6","721","177","282","60908.61","0.2455","1.59","344.12","215.99"],
+["2025-07","DIGITAL EXCLUSIVO","7","548","59","74","15113.99","0.1077","1.25","256.17","204.24"],
+["2025-07","OMNICANAL (HÍBRIDO)","7","721","148","222","51218.15","0.2053","1.5","346.07","230.71"],
+["2025-07","DIGITAL EXCLUSIVO","8","548","75","92","21911.79","0.1369","1.23","292.16","238.17"],
+["2025-07","OMNICANAL (HÍBRIDO)","8","721","171","312","61825.38","0.2372","1.82","361.55","198.16"],
+["2025-07","DIGITAL EXCLUSIVO","9","548","62","73","20084.92","0.1131","1.18","323.95","275.14"],
+["2025-07","OMNICANAL (HÍBRIDO)","9","721","157","250","51476.67","0.2178","1.59","327.88","205.91"],
+["2025-08","DIGITAL EXCLUSIVO","-12","539","26","31","7150.74","0.0482","1.19","275.03","230.67"],
+["2025-08","OMNICANAL (HÍBRIDO)","-12","690","122","182","43862.78","0.1768","1.49","359.53","241"],
+["2025-08","DIGITAL EXCLUSIVO","-11","539","27","43","8930.63","0.0501","1.59","330.76","207.69"],
+["2025-08","OMNICANAL (HÍBRIDO)","-11","690","94","134","24531.27","0.1362","1.43","260.97","183.07"],
+["2025-08","DIGITAL EXCLUSIVO","-10","539","18","27","5307.45","0.0334","1.5","294.86","196.57"],
+["2025-08","OMNICANAL (HÍBRIDO)","-10","690","87","121","23837.04","0.1261","1.39","273.99","197"],
+["2025-08","DIGITAL EXCLUSIVO","-9","539","47","54","20838.31","0.0872","1.15","443.37","385.89"],
+["2025-08","OMNICANAL (HÍBRIDO)","-9","690","126","187","48510.51","0.1826","1.48","385","259.41"],
+["2025-08","DIGITAL EXCLUSIVO","-8","539","45","56","13132.11","0.0835","1.24","291.82","234.5"],
+["2025-08","OMNICANAL (HÍBRIDO)","-8","690","133","204","33673.41","0.1928","1.53","253.18","165.07"],
+["2025-08","DIGITAL EXCLUSIVO","-7","539","40","55","12256.57","0.0742","1.38","306.41","222.85"],
+["2025-08","OMNICANAL (HÍBRIDO)","-7","690","102","145","28053.56","0.1478","1.42","275.03","193.47"],
+["2025-08","DIGITAL EXCLUSIVO","-6","539","27","32","9281.36","0.0501","1.19","343.75","290.04"],
+["2025-08","OMNICANAL (HÍBRIDO)","-6","690","112","163","35863.59","0.1623","1.46","320.21","220.02"],
+["2025-08","DIGITAL EXCLUSIVO","-5","539","33","41","10873.22","0.0612","1.24","329.49","265.2"],
+["2025-08","OMNICANAL (HÍBRIDO)","-5","690","118","163","38951.69","0.171","1.38","330.1","238.97"],
+["2025-08","DIGITAL EXCLUSIVO","-4","539","33","39","9081.73","0.0612","1.18","275.2","232.86"],
+["2025-08","OMNICANAL (HÍBRIDO)","-4","690","109","174","39327.55","0.158","1.6","360.8","226.02"],
+["2025-08","DIGITAL EXCLUSIVO","-3","539","53","70","22408.34","0.0983","1.32","422.8","320.12"],
+["2025-08","OMNICANAL (HÍBRIDO)","-3","690","160","291","71917.55","0.2319","1.82","449.48","247.14"],
+["2025-08","DIGITAL EXCLUSIVO","-2","539","52","58","20058.21","0.0965","1.12","385.73","345.83"],
+["2025-08","OMNICANAL (HÍBRIDO)","-2","690","168","279","66684.36","0.2435","1.66","396.93","239.01"],
+["2025-08","DIGITAL EXCLUSIVO","-1","539","87","123","44828.73","0.1614","1.41","515.27","364.46"],
+["2025-08","OMNICANAL (HÍBRIDO)","-1","690","192","351","106291.96","0.2783","1.83","553.6","302.83"],
+["2025-08","DIGITAL EXCLUSIVO","0","539","519","666","172603.05","0.9629","1.28","332.57","259.16"],
+["2025-08","OMNICANAL (HÍBRIDO)","0","690","673","1232","281104.71","0.9754","1.83","417.69","228.17"],
+["2025-08","DIGITAL EXCLUSIVO","1","539","78","118","14654.04","0.1447","1.51","187.87","124.19"],
+["2025-08","OMNICANAL (HÍBRIDO)","1","690","217","375","58859.18","0.3145","1.73","271.24","156.96"],
+["2025-08","DIGITAL EXCLUSIVO","2","539","71","99","25404.02","0.1317","1.39","357.8","256.61"],
+["2025-08","OMNICANAL (HÍBRIDO)","2","690","177","330","52277.29","0.2565","1.86","295.35","158.42"],
+["2025-08","DIGITAL EXCLUSIVO","3","539","96","139","34155.72","0.1781","1.45","355.79","245.72"],
+["2025-08","OMNICANAL (HÍBRIDO)","3","690","216","412","87016.39","0.313","1.91","402.85","211.2"],
+["2025-08","DIGITAL EXCLUSIVO","4","539","71","93","21259.89","0.1317","1.31","299.44","228.6"],
+["2025-08","OMNICANAL (HÍBRIDO)","4","690","174","286","52075.31","0.2522","1.64","299.28","182.08"],
+["2025-08","DIGITAL EXCLUSIVO","5","539","59","82","19366.48","0.1095","1.39","328.25","236.18"],
+["2025-08","OMNICANAL (HÍBRIDO)","5","690","150","250","39099.82","0.2174","1.67","260.67","156.4"],
+["2025-08","DIGITAL EXCLUSIVO","6","539","64","90","21625.2","0.1187","1.41","337.89","240.28"],
+["2025-08","OMNICANAL (HÍBRIDO)","6","690","139","223","41519.47","0.2014","1.6","298.7","186.19"],
+["2025-08","DIGITAL EXCLUSIVO","7","539","69","91","22818.87","0.128","1.32","330.71","250.76"],
+["2025-08","OMNICANAL (HÍBRIDO)","7","690","171","268","46220.81","0.2478","1.57","270.3","172.47"],
+["2025-08","DIGITAL EXCLUSIVO","8","539","69","95","28244.67","0.128","1.38","409.34","297.31"],
+["2025-08","OMNICANAL (HÍBRIDO)","8","690","140","219","53118.64","0.2029","1.56","379.42","242.55"],
+["2025-08","DIGITAL EXCLUSIVO","9","539","64","96","26667.92","0.1187","1.5","416.69","277.79"],
+["2025-08","OMNICANAL (HÍBRIDO)","9","690","162","267","47304.25","0.2348","1.65","292","177.17"],
+["2025-09","DIGITAL EXCLUSIVO","-12","538","17","21","3745.88","0.0316","1.24","220.35","178.38"],
+["2025-09","OMNICANAL (HÍBRIDO)","-12","630","82","119","22492.38","0.1302","1.45","274.3","189.01"],
+["2025-09","DIGITAL EXCLUSIVO","-11","538","20","25","5930.58","0.0372","1.25","296.53","237.22"],
+["2025-09","OMNICANAL (HÍBRIDO)","-11","630","87","139","25360.2","0.1381","1.6","291.5","182.45"],
+["2025-09","DIGITAL EXCLUSIVO","-10","538","29","33","9780.12","0.0539","1.14","337.25","296.37"],
+["2025-09","OMNICANAL (HÍBRIDO)","-10","630","125","191","39970.23","0.1984","1.53","319.76","209.27"],
+["2025-09","DIGITAL EXCLUSIVO","-9","538","29","37","10797.97","0.0539","1.28","372.34","291.84"],
+["2025-09","OMNICANAL (HÍBRIDO)","-9","630","109","175","29966.53","0.173","1.61","274.92","171.24"],
+["2025-09","DIGITAL EXCLUSIVO","-8","538","32","36","14434.36","0.0595","1.13","451.07","400.95"],
+["2025-09","OMNICANAL (HÍBRIDO)","-8","630","94","130","23284.22","0.1492","1.38","247.7","179.11"],
+["2025-09","DIGITAL EXCLUSIVO","-7","538","30","39","8600.85","0.0558","1.3","286.7","220.53"],
+["2025-09","OMNICANAL (HÍBRIDO)","-7","630","104","142","28678.24","0.1651","1.37","275.75","201.96"],
+["2025-09","DIGITAL EXCLUSIVO","-6","538","39","48","12784.9","0.0725","1.23","327.82","266.35"],
+["2025-09","OMNICANAL (HÍBRIDO)","-6","630","113","175","40625.54","0.1794","1.55","359.52","232.15"],
+["2025-09","DIGITAL EXCLUSIVO","-5","538","21","23","7020.85","0.039","1.1","334.33","305.25"],
+["2025-09","OMNICANAL (HÍBRIDO)","-5","630","121","200","39348.04","0.1921","1.65","325.19","196.74"],
+["2025-09","DIGITAL EXCLUSIVO","-4","538","31","36","10458.09","0.0576","1.16","337.36","290.5"],
+["2025-09","OMNICANAL (HÍBRIDO)","-4","630","138","211","43547.46","0.219","1.53","315.56","206.39"],
+["2025-09","DIGITAL EXCLUSIVO","-3","538","41","50","14295.42","0.0762","1.22","348.67","285.91"],
+["2025-09","OMNICANAL (HÍBRIDO)","-3","630","152","222","56067.23","0.2413","1.46","368.86","252.56"],
+["2025-09","DIGITAL EXCLUSIVO","-2","538","41","77","33578.02","0.0762","1.88","818.98","436.08"],
+["2025-09","OMNICANAL (HÍBRIDO)","-2","630","154","271","56344.21","0.2444","1.76","365.87","207.91"],
+["2025-09","DIGITAL EXCLUSIVO","-1","538","69","117","47369.23","0.1283","1.7","686.51","404.87"],
+["2025-09","OMNICANAL (HÍBRIDO)","-1","630","198","386","90910.63","0.3143","1.95","459.14","235.52"],
+["2025-09","DIGITAL EXCLUSIVO","0","538","530","683","158782.81","0.9851","1.29","299.59","232.48"],
+["2025-09","OMNICANAL (HÍBRIDO)","0","630","620","1130","231354.74","0.9841","1.82","373.15","204.74"],
+["2025-09","DIGITAL EXCLUSIVO","1","538","73","117","22501.75","0.1357","1.6","308.24","192.32"],
+["2025-09","OMNICANAL (HÍBRIDO)","1","630","217","445","63917.38","0.3444","2.05","294.55","143.63"],
+["2025-09","DIGITAL EXCLUSIVO","2","538","75","107","25082.39","0.1394","1.43","334.43","234.41"],
+["2025-09","OMNICANAL (HÍBRIDO)","2","630","191","431","80693.66","0.3032","2.26","422.48","187.22"],
+["2025-09","DIGITAL EXCLUSIVO","3","538","63","76","13727.06","0.1171","1.21","217.89","180.62"],
+["2025-09","OMNICANAL (HÍBRIDO)","3","630","188","338","63494.56","0.2984","1.8","337.74","187.85"],
+["2025-09","DIGITAL EXCLUSIVO","4","538","73","86","16913.28","0.1357","1.18","231.69","196.67"],
+["2025-09","OMNICANAL (HÍBRIDO)","4","630","143","238","36842.86","0.227","1.66","257.64","154.8"],
+["2025-09","DIGITAL EXCLUSIVO","5","538","62","68","10040","0.1152","1.1","161.94","147.65"],
+["2025-09","OMNICANAL (HÍBRIDO)","5","630","138","208","38055.67","0.219","1.51","275.77","182.96"],
+["2025-09","DIGITAL EXCLUSIVO","6","538","65","73","12476.25","0.1208","1.12","191.94","170.91"],
+["2025-09","OMNICANAL (HÍBRIDO)","6","630","168","274","62518.12","0.2667","1.63","372.13","228.17"],
+["2025-09","DIGITAL EXCLUSIVO","7","538","72","83","20538.42","0.1338","1.15","285.26","247.45"],
+["2025-09","OMNICANAL (HÍBRIDO)","7","630","158","278","60216.07","0.2508","1.76","381.11","216.6"],
+["2025-09","DIGITAL EXCLUSIVO","8","538","64","84","20511.34","0.119","1.31","320.49","244.18"],
+["2025-09","OMNICANAL (HÍBRIDO)","8","630","159","274","66565.65","0.2524","1.72","418.65","242.94"],
+["2025-09","DIGITAL EXCLUSIVO","9","538","51","59","9463.59","0.0948","1.16","185.56","160.4"],
+["2025-09","OMNICANAL (HÍBRIDO)","9","630","156","266","52075.72","0.2476","1.71","333.82","195.77"],
+["2025-10","DIGITAL EXCLUSIVO","-12","593","30","38","6908.2","0.0506","1.27","230.27","181.79"],
+["2025-10","OMNICANAL (HÍBRIDO)","-12","672","88","133","25398.57","0.131","1.51","288.62","190.97"],
+["2025-10","DIGITAL EXCLUSIVO","-11","593","43","52","14220.67","0.0725","1.21","330.71","273.47"],
+["2025-10","OMNICANAL (HÍBRIDO)","-11","672","125","183","47248.61","0.186","1.46","377.99","258.19"],
+["2025-10","DIGITAL EXCLUSIVO","-10","593","26","34","7450.88","0.0438","1.31","286.57","219.14"],
+["2025-10","OMNICANAL (HÍBRIDO)","-10","672","130","192","29612.66","0.1935","1.48","227.79","154.23"],
+["2025-10","DIGITAL EXCLUSIVO","-9","593","26","33","7432.27","0.0438","1.27","285.86","225.22"],
+["2025-10","OMNICANAL (HÍBRIDO)","-9","672","112","163","35332.2","0.1667","1.46","315.47","216.76"],
+["2025-10","DIGITAL EXCLUSIVO","-8","593","25","26","8173.59","0.0422","1.04","326.94","314.37"],
+["2025-10","OMNICANAL (HÍBRIDO)","-8","672","92","138","28858.13","0.1369","1.5","313.68","209.12"],
+["2025-10","DIGITAL EXCLUSIVO","-7","593","37","42","12404.98","0.0624","1.14","335.27","295.36"],
+["2025-10","OMNICANAL (HÍBRIDO)","-7","672","108","154","33634.21","0.1607","1.43","311.43","218.4"],
+["2025-10","DIGITAL EXCLUSIVO","-6","593","37","46","13321.18","0.0624","1.24","360.03","289.59"],
+["2025-10","OMNICANAL (HÍBRIDO)","-6","672","103","155","29892.4","0.1533","1.5","290.22","192.85"],
+["2025-10","DIGITAL EXCLUSIVO","-5","593","38","48","10630.37","0.0641","1.26","279.75","221.47"],
+["2025-10","OMNICANAL (HÍBRIDO)","-5","672","132","203","40357.08","0.1964","1.54","305.74","198.8"],
+["2025-10","DIGITAL EXCLUSIVO","-4","593","51","71","19867.47","0.086","1.39","389.56","279.82"],
+["2025-10","OMNICANAL (HÍBRIDO)","-4","672","110","183","43159.78","0.1637","1.66","392.36","235.85"],
+["2025-10","DIGITAL EXCLUSIVO","-3","593","57","75","22329.63","0.0961","1.32","391.75","297.73"],
+["2025-10","OMNICANAL (HÍBRIDO)","-3","672","131","239","53920.79","0.1949","1.82","411.61","225.61"],
+["2025-10","DIGITAL EXCLUSIVO","-2","593","55","65","21576.63","0.0927","1.18","392.3","331.95"],
+["2025-10","OMNICANAL (HÍBRIDO)","-2","672","142","234","50995.65","0.2113","1.65","359.12","217.93"],
+["2025-10","DIGITAL EXCLUSIVO","-1","593","66","101","38886.73","0.1113","1.53","589.19","385.02"],
+["2025-10","OMNICANAL (HÍBRIDO)","-1","672","207","362","98430.14","0.308","1.75","475.51","271.91"],
+["2025-10","DIGITAL EXCLUSIVO","0","593","574","744","164935.8","0.968","1.3","287.34","221.69"],
+["2025-10","OMNICANAL (HÍBRIDO)","0","672","656","1215","261463.91","0.9762","1.85","398.57","215.2"],
+["2025-10","DIGITAL EXCLUSIVO","1","593","99","145","24823.15","0.1669","1.46","250.74","171.19"],
+["2025-10","OMNICANAL (HÍBRIDO)","1","672","244","481","93704.32","0.3631","1.97","384.03","194.81"],
+["2025-10","DIGITAL EXCLUSIVO","2","593","90","121","18633.54","0.1518","1.34","207.04","154"],
+["2025-10","OMNICANAL (HÍBRIDO)","2","672","219","386","65207.85","0.3259","1.76","297.75","168.93"],
+["2025-10","DIGITAL EXCLUSIVO","3","593","93","114","15728.8","0.1568","1.23","169.13","137.97"],
+["2025-10","OMNICANAL (HÍBRIDO)","3","672","170","293","54981.42","0.253","1.72","323.42","187.65"],
+["2025-10","DIGITAL EXCLUSIVO","4","593","59","81","16464.16","0.0995","1.37","279.05","203.26"],
+["2025-10","OMNICANAL (HÍBRIDO)","4","672","158","237","45765.98","0.2351","1.5","289.66","193.11"],
+["2025-10","DIGITAL EXCLUSIVO","5","593","71","92","19608.16","0.1197","1.3","276.17","213.13"],
+["2025-10","OMNICANAL (HÍBRIDO)","5","672","159","250","52523.7","0.2366","1.57","330.34","210.09"],
+["2025-10","DIGITAL EXCLUSIVO","6","593","73","80","19886.08","0.1231","1.1","272.41","248.58"],
+["2025-10","OMNICANAL (HÍBRIDO)","6","672","145","212","50895.34","0.2158","1.46","351","240.07"],
+["2025-10","DIGITAL EXCLUSIVO","7","593","73","102","18997.17","0.1231","1.4","260.24","186.25"],
+["2025-10","OMNICANAL (HÍBRIDO)","7","672","173","309","57138.27","0.2574","1.79","330.28","184.91"],
+["2025-10","DIGITAL EXCLUSIVO","8","593","76","86","17121.52","0.1282","1.13","225.28","199.09"],
+["2025-10","OMNICANAL (HÍBRIDO)","8","672","148","238","50186.88","0.2202","1.61","339.1","210.87"],
+["2025-11","DIGITAL EXCLUSIVO","-12","815","60","73","23878.99","0.0736","1.22","397.98","327.11"],
+["2025-11","OMNICANAL (HÍBRIDO)","-12","952","163","276","57569.74","0.1712","1.69","353.19","208.59"],
+["2025-11","DIGITAL EXCLUSIVO","-11","815","40","50","13655.14","0.0491","1.25","341.38","273.1"],
+["2025-11","OMNICANAL (HÍBRIDO)","-11","952","189","290","58106.5","0.1985","1.53","307.44","200.37"],
+["2025-11","DIGITAL EXCLUSIVO","-10","815","42","47","10703.6","0.0515","1.12","254.85","227.74"],
+["2025-11","OMNICANAL (HÍBRIDO)","-10","952","148","210","54915.03","0.1555","1.42","371.05","261.5"],
+["2025-11","DIGITAL EXCLUSIVO","-9","815","31","37","11552.8","0.038","1.19","372.67","312.24"],
+["2025-11","OMNICANAL (HÍBRIDO)","-9","952","136","209","43085.39","0.1429","1.54","316.8","206.15"],
+["2025-11","DIGITAL EXCLUSIVO","-8","815","38","40","14509.13","0.0466","1.05","381.82","362.73"],
+["2025-11","OMNICANAL (HÍBRIDO)","-8","952","151","231","47743.8","0.1586","1.53","316.18","206.68"],
+["2025-11","DIGITAL EXCLUSIVO","-7","815","35","41","14954.02","0.0429","1.17","427.26","364.73"],
+["2025-11","OMNICANAL (HÍBRIDO)","-7","952","144","229","53730.35","0.1513","1.59","373.13","234.63"],
+["2025-11","DIGITAL EXCLUSIVO","-6","815","49","59","16151.12","0.0601","1.2","329.61","273.75"],
+["2025-11","OMNICANAL (HÍBRIDO)","-6","952","188","273","65675.35","0.1975","1.45","349.34","240.57"],
+["2025-11","DIGITAL EXCLUSIVO","-5","815","44","52","14606.68","0.054","1.18","331.97","280.9"],
+["2025-11","OMNICANAL (HÍBRIDO)","-5","952","182","285","62710.67","0.1912","1.57","344.56","220.04"],
+["2025-11","DIGITAL EXCLUSIVO","-4","815","55","69","22272.21","0.0675","1.25","404.95","322.79"],
+["2025-11","OMNICANAL (HÍBRIDO)","-4","952","186","282","64402.37","0.1954","1.52","346.25","228.38"],
+["2025-11","DIGITAL EXCLUSIVO","-3","815","74","97","37424.36","0.0908","1.31","505.73","385.82"],
+["2025-11","OMNICANAL (HÍBRIDO)","-3","952","239","380","94566.4","0.2511","1.59","395.68","248.86"],
+["2025-11","DIGITAL EXCLUSIVO","-2","815","56","69","19092.34","0.0687","1.23","340.93","276.7"],
+["2025-11","OMNICANAL (HÍBRIDO)","-2","952","205","339","109561.61","0.2153","1.65","534.45","323.19"],
+["2025-11","DIGITAL EXCLUSIVO","-1","815","65","79","32803.57","0.0798","1.22","504.67","415.24"],
+["2025-11","OMNICANAL (HÍBRIDO)","-1","952","233","416","108774.89","0.2447","1.79","466.85","261.48"],
+["2025-11","DIGITAL EXCLUSIVO","0","815","796","1062","289155.22","0.9767","1.33","363.26","272.27"],
+["2025-11","OMNICANAL (HÍBRIDO)","0","952","940","1846","466097.89","0.9874","1.96","495.85","252.49"],
+["2025-11","DIGITAL EXCLUSIVO","1","815","149","196","39486.25","0.1828","1.32","265.01","201.46"],
+["2025-11","OMNICANAL (HÍBRIDO)","1","952","374","734","95841.48","0.3929","1.96","256.26","130.57"],
+["2025-11","DIGITAL EXCLUSIVO","2","815","106","130","19625","0.1301","1.23","185.14","150.96"],
+["2025-11","OMNICANAL (HÍBRIDO)","2","952","230","413","71595.97","0.2416","1.8","311.29","173.36"],
+["2025-11","DIGITAL EXCLUSIVO","3","815","83","96","16799.59","0.1018","1.16","202.4","175"],
+["2025-11","OMNICANAL (HÍBRIDO)","3","952","220","391","64811.09","0.2311","1.78","294.6","165.76"],
+["2025-11","DIGITAL EXCLUSIVO","4","815","105","128","25983.25","0.1288","1.22","247.46","202.99"],
+["2025-11","OMNICANAL (HÍBRIDO)","4","952","247","433","91572.98","0.2595","1.75","370.74","211.48"],
+["2025-11","DIGITAL EXCLUSIVO","5","815","67","70","17057.9","0.0822","1.04","254.6","243.68"],
+["2025-11","OMNICANAL (HÍBRIDO)","5","952","226","408","92503.81","0.2374","1.81","409.31","226.73"],
+["2025-11","DIGITAL EXCLUSIVO","6","815","105","136","38120.68","0.1288","1.3","363.05","280.3"],
+["2025-11","OMNICANAL (HÍBRIDO)","6","952","236","471","94866.42","0.2479","2","401.98","201.41"],
+["2025-11","DIGITAL EXCLUSIVO","7","815","78","89","30519.87","0.0957","1.14","391.28","342.92"],
+["2025-11","OMNICANAL (HÍBRIDO)","7","952","218","434","96335.95","0.229","1.99","441.91","221.97"],
+["2025-12","DIGITAL EXCLUSIVO","-12","619","35","43","10070.98","0.0565","1.23","287.74","234.21"],
+["2025-12","OMNICANAL (HÍBRIDO)","-12","802","165","258","52016.57","0.2057","1.56","315.25","201.61"],
+["2025-12","DIGITAL EXCLUSIVO","-11","619","33","40","9417.71","0.0533","1.21","285.39","235.44"],
+["2025-12","OMNICANAL (HÍBRIDO)","-11","802","129","182","42823.49","0.1608","1.41","331.97","235.29"],
+["2025-12","DIGITAL EXCLUSIVO","-10","619","19","21","4583.08","0.0307","1.11","241.21","218.24"],
+["2025-12","OMNICANAL (HÍBRIDO)","-10","802","112","169","32554.6","0.1397","1.51","290.67","192.63"],
+["2025-12","DIGITAL EXCLUSIVO","-9","619","29","30","8906.05","0.0468","1.03","307.11","296.87"],
+["2025-12","OMNICANAL (HÍBRIDO)","-9","802","126","186","38760.36","0.1571","1.48","307.62","208.39"],
+["2025-12","DIGITAL EXCLUSIVO","-8","619","30","41","11729.87","0.0485","1.37","391","286.09"],
+["2025-12","OMNICANAL (HÍBRIDO)","-8","802","107","147","34639.89","0.1334","1.37","323.74","235.65"],
+["2025-12","DIGITAL EXCLUSIVO","-7","619","32","38","7719.21","0.0517","1.19","241.23","203.14"],
+["2025-12","OMNICANAL (HÍBRIDO)","-7","802","151","235","45328.59","0.1883","1.56","300.19","192.89"],
+["2025-12","DIGITAL EXCLUSIVO","-6","619","34","41","15988.32","0.0549","1.21","470.24","389.96"],
+["2025-12","OMNICANAL (HÍBRIDO)","-6","802","147","231","46095.09","0.1833","1.57","313.57","199.55"],
+["2025-12","DIGITAL EXCLUSIVO","-5","619","36","42","15674.55","0.0582","1.17","435.4","373.2"],
+["2025-12","OMNICANAL (HÍBRIDO)","-5","802","151","215","43630.84","0.1883","1.42","288.95","202.93"],
+["2025-12","DIGITAL EXCLUSIVO","-4","619","37","47","13910.88","0.0598","1.27","375.97","295.98"],
+["2025-12","OMNICANAL (HÍBRIDO)","-4","802","158","238","51396.46","0.197","1.51","325.29","215.95"],
+["2025-12","DIGITAL EXCLUSIVO","-3","619","30","36","11300.31","0.0485","1.2","376.68","313.9"],
+["2025-12","OMNICANAL (HÍBRIDO)","-3","802","168","263","58729.58","0.2095","1.57","349.58","223.31"],
+["2025-12","DIGITAL EXCLUSIVO","-2","619","48","56","17361.2","0.0775","1.17","361.69","310.02"],
+["2025-12","OMNICANAL (HÍBRIDO)","-2","802","160","259","62275.29","0.1995","1.62","389.22","240.45"],
+["2025-12","DIGITAL EXCLUSIVO","-1","619","104","151","54023.79","0.168","1.45","519.46","357.77"],
+["2025-12","OMNICANAL (HÍBRIDO)","-1","802","254","467","129244.43","0.3167","1.84","508.84","276.75"],
+["2025-12","DIGITAL EXCLUSIVO","0","619","610","773","179439.54","0.9855","1.27","294.16","232.13"],
+["2025-12","OMNICANAL (HÍBRIDO)","0","802","791","1465","307108.24","0.9863","1.85","388.25","209.63"],
+["2025-12","DIGITAL EXCLUSIVO","1","619","93","125","19501.92","0.1502","1.34","209.7","156.02"],
+["2025-12","OMNICANAL (HÍBRIDO)","1","802","257","462","50276.26","0.3204","1.8","195.63","108.82"],
+["2025-12","DIGITAL EXCLUSIVO","2","619","54","73","15927.29","0.0872","1.35","294.95","218.18"],
+["2025-12","OMNICANAL (HÍBRIDO)","2","802","170","269","43387.57","0.212","1.58","255.22","161.29"],
+["2025-12","DIGITAL EXCLUSIVO","3","619","83","99","19868.06","0.1341","1.19","239.37","200.69"],
+["2025-12","OMNICANAL (HÍBRIDO)","3","802","213","356","69291.3","0.2656","1.67","325.31","194.64"],
+["2025-12","DIGITAL EXCLUSIVO","4","619","80","95","20955.17","0.1292","1.19","261.94","220.58"],
+["2025-12","OMNICANAL (HÍBRIDO)","4","802","221","354","68495.59","0.2756","1.6","309.93","193.49"],
+["2025-12","DIGITAL EXCLUSIVO","5","619","75","98","19623.15","0.1212","1.31","261.64","200.24"],
+["2025-12","OMNICANAL (HÍBRIDO)","5","802","215","360","66045.88","0.2681","1.67","307.19","183.46"],
+["2025-12","DIGITAL EXCLUSIVO","6","619","73","95","19561.86","0.1179","1.3","267.97","205.91"],
+["2025-12","OMNICANAL (HÍBRIDO)","6","802","187","309","57176.17","0.2332","1.65","305.75","185.04"],
+["2026-01","DIGITAL EXCLUSIVO","-12","569","23","29","5268.22","0.0404","1.26","229.05","181.66"],
+["2026-01","OMNICANAL (HÍBRIDO)","-12","649","97","139","25764.46","0.1495","1.43","265.61","185.36"],
+["2026-01","DIGITAL EXCLUSIVO","-11","569","17","20","9268.59","0.0299","1.18","545.21","463.43"],
+["2026-01","OMNICANAL (HÍBRIDO)","-11","649","89","125","26958.7","0.1371","1.4","302.91","215.67"],
+["2026-01","DIGITAL EXCLUSIVO","-10","569","30","35","9285.11","0.0527","1.17","309.5","265.29"],
+["2026-01","OMNICANAL (HÍBRIDO)","-10","649","91","154","36264.96","0.1402","1.69","398.52","235.49"],
+["2026-01","DIGITAL EXCLUSIVO","-9","569","32","34","13171.33","0.0562","1.06","411.6","387.39"],
+["2026-01","OMNICANAL (HÍBRIDO)","-9","649","102","154","37434.01","0.1572","1.51","367","243.08"],
+["2026-01","DIGITAL EXCLUSIVO","-8","569","32","41","11637.57","0.0562","1.28","363.67","283.84"],
+["2026-01","OMNICANAL (HÍBRIDO)","-8","649","110","179","39570.41","0.1695","1.63","359.73","221.06"],
+["2026-01","DIGITAL EXCLUSIVO","-7","569","30","37","8613.52","0.0527","1.23","287.12","232.8"],
+["2026-01","OMNICANAL (HÍBRIDO)","-7","649","115","185","36740.36","0.1772","1.61","319.48","198.6"],
+["2026-01","DIGITAL EXCLUSIVO","-6","569","25","30","11235.46","0.0439","1.2","449.42","374.52"],
+["2026-01","OMNICANAL (HÍBRIDO)","-6","649","106","193","38345.87","0.1633","1.82","361.75","198.68"],
+["2026-01","DIGITAL EXCLUSIVO","-5","569","38","48","14909.68","0.0668","1.26","392.36","310.62"],
+["2026-01","OMNICANAL (HÍBRIDO)","-5","649","111","166","37722.57","0.171","1.5","339.84","227.24"],
+["2026-01","DIGITAL EXCLUSIVO","-4","569","37","42","19994.37","0.065","1.14","540.39","476.06"],
+["2026-01","OMNICANAL (HÍBRIDO)","-4","649","112","181","42606.94","0.1726","1.62","380.42","235.4"],
+["2026-01","DIGITAL EXCLUSIVO","-3","569","35","45","10896.55","0.0615","1.29","311.33","242.15"],
+["2026-01","OMNICANAL (HÍBRIDO)","-3","649","149","240","57819.09","0.2296","1.61","388.05","240.91"],
+["2026-01","DIGITAL EXCLUSIVO","-2","569","66","84","26863.3","0.116","1.27","407.02","319.8"],
+["2026-01","OMNICANAL (HÍBRIDO)","-2","649","200","386","105126.88","0.3082","1.93","525.63","272.35"],
+["2026-01","DIGITAL EXCLUSIVO","-1","569","66","81","26335.08","0.116","1.23","399.02","325.12"],
+["2026-01","OMNICANAL (HÍBRIDO)","-1","649","177","323","76304.13","0.2727","1.82","431.1","236.24"],
+["2026-01","DIGITAL EXCLUSIVO","0","569","561","675","151067.94","0.9859","1.2","269.28","223.8"],
+["2026-01","OMNICANAL (HÍBRIDO)","0","649","639","1123","236164.92","0.9846","1.76","369.59","210.3"],
+["2026-01","DIGITAL EXCLUSIVO","1","569","73","95","15062.94","0.1283","1.3","206.34","158.56"],
+["2026-01","OMNICANAL (HÍBRIDO)","1","649","185","327","45996.54","0.2851","1.77","248.63","140.66"],
+["2026-01","DIGITAL EXCLUSIVO","2","569","79","95","21063.36","0.1388","1.2","266.62","221.72"],
+["2026-01","OMNICANAL (HÍBRIDO)","2","649","177","310","53469.01","0.2727","1.75","302.08","172.48"],
+["2026-01","DIGITAL EXCLUSIVO","3","569","80","90","25418.68","0.1406","1.13","317.73","282.43"],
+["2026-01","OMNICANAL (HÍBRIDO)","3","649","170","303","62285.79","0.2619","1.78","366.39","205.56"],
+["2026-01","DIGITAL EXCLUSIVO","4","569","58","68","20548.2","0.1019","1.17","354.28","302.18"],
+["2026-01","OMNICANAL (HÍBRIDO)","4","649","178","307","60969.12","0.2743","1.72","342.52","198.6"],
+["2026-01","DIGITAL EXCLUSIVO","5","569","68","80","16463.75","0.1195","1.18","242.11","205.8"],
+["2026-01","OMNICANAL (HÍBRIDO)","5","649","165","274","55261.97","0.2542","1.66","334.92","201.69"],
+["2026-02","DIGITAL EXCLUSIVO","-12","559","10","11","2701.31","0.0179","1.1","270.13","245.57"],
+["2026-02","OMNICANAL (HÍBRIDO)","-12","663","85","206","61465.85","0.1282","2.42","723.13","298.38"],
+["2026-02","DIGITAL EXCLUSIVO","-11","559","27","31","4864.05","0.0483","1.15","180.15","156.9"],
+["2026-02","OMNICANAL (HÍBRIDO)","-11","663","91","130","25633.96","0.1373","1.43","281.69","197.18"],
+["2026-02","DIGITAL EXCLUSIVO","-10","559","22","25","7756.59","0.0394","1.14","352.57","310.26"],
+["2026-02","OMNICANAL (HÍBRIDO)","-10","663","103","168","27873.91","0.1554","1.63","270.62","165.92"],
+["2026-02","DIGITAL EXCLUSIVO","-9","559","24","26","9349.77","0.0429","1.08","389.57","359.61"],
+["2026-02","OMNICANAL (HÍBRIDO)","-9","663","112","180","44176.53","0.1689","1.61","394.43","245.43"],
+["2026-02","DIGITAL EXCLUSIVO","-8","559","31","40","8543.27","0.0555","1.29","275.59","213.58"],
+["2026-02","OMNICANAL (HÍBRIDO)","-8","663","90","142","33282.82","0.1357","1.58","369.81","234.39"],
+["2026-02","DIGITAL EXCLUSIVO","-7","559","30","40","10771.79","0.0537","1.33","359.06","269.29"],
+["2026-02","OMNICANAL (HÍBRIDO)","-7","663","110","172","39330.67","0.1659","1.56","357.55","228.67"],
+["2026-02","DIGITAL EXCLUSIVO","-6","559","35","38","11228.01","0.0626","1.09","320.8","295.47"],
+["2026-02","OMNICANAL (HÍBRIDO)","-6","663","115","182","42391.88","0.1735","1.58","368.63","232.92"],
+["2026-02","DIGITAL EXCLUSIVO","-5","559","27","33","8050.76","0.0483","1.22","298.18","243.96"],
+["2026-02","OMNICANAL (HÍBRIDO)","-5","663","112","167","36286.03","0.1689","1.49","323.98","217.28"],
+["2026-02","DIGITAL EXCLUSIVO","-4","559","24","28","9445.01","0.0429","1.17","393.54","337.32"],
+["2026-02","OMNICANAL (HÍBRIDO)","-4","663","120","215","56222.95","0.181","1.79","468.52","261.5"],
+["2026-02","DIGITAL EXCLUSIVO","-3","559","49","59","20479.34","0.0877","1.2","417.95","347.11"],
+["2026-02","OMNICANAL (HÍBRIDO)","-3","663","171","271","80179.59","0.2579","1.58","468.89","295.87"],
+["2026-02","DIGITAL EXCLUSIVO","-2","559","39","51","16221.73","0.0698","1.31","415.94","318.07"],
+["2026-02","OMNICANAL (HÍBRIDO)","-2","663","175","289","60542.04","0.264","1.65","345.95","209.49"],
+["2026-02","DIGITAL EXCLUSIVO","-1","559","47","62","15340.43","0.0841","1.32","326.39","247.43"],
+["2026-02","OMNICANAL (HÍBRIDO)","-1","663","168","292","75226.2","0.2534","1.74","447.78","257.62"],
+["2026-02","DIGITAL EXCLUSIVO","0","559","549","667","139409.25","0.9821","1.21","253.93","209.01"],
+["2026-02","OMNICANAL (HÍBRIDO)","0","663","644","1085","232964.24","0.9713","1.68","361.75","214.71"],
+["2026-02","DIGITAL EXCLUSIVO","1","559","85","120","26309.72","0.1521","1.41","309.53","219.25"],
+["2026-02","OMNICANAL (HÍBRIDO)","1","663","250","492","88660.34","0.3771","1.97","354.64","180.2"],
+["2026-02","DIGITAL EXCLUSIVO","2","559","64","97","16327.46","0.1145","1.52","255.12","168.32"],
+["2026-02","OMNICANAL (HÍBRIDO)","2","663","180","318","68907.39","0.2715","1.77","382.82","216.69"],
+["2026-02","DIGITAL EXCLUSIVO","3","559","67","89","19682.85","0.1199","1.33","293.77","221.16"],
+["2026-02","OMNICANAL (HÍBRIDO)","3","663","164","321","78242.95","0.2474","1.96","477.09","243.75"],
+["2026-02","DIGITAL EXCLUSIVO","4","559","75","89","18591.6","0.1342","1.19","247.89","208.89"],
+["2026-02","OMNICANAL (HÍBRIDO)","4","663","151","279","52045.84","0.2278","1.85","344.67","186.54"],
+["2026-03","DIGITAL EXCLUSIVO","-12","654","26","28","4859.52","0.0398","1.08","186.9","173.55"],
+["2026-03","OMNICANAL (HÍBRIDO)","-12","730","112","162","36194.19","0.1534","1.45","323.16","223.42"],
+["2026-03","DIGITAL EXCLUSIVO","-11","654","25","27","11790.64","0.0382","1.08","471.63","436.69"],
+["2026-03","OMNICANAL (HÍBRIDO)","-11","730","105","130","32635.45","0.1438","1.24","310.81","251.04"],
+["2026-03","DIGITAL EXCLUSIVO","-10","654","21","25","6391.66","0.0321","1.19","304.36","255.67"],
+["2026-03","OMNICANAL (HÍBRIDO)","-10","730","111","159","43241.6","0.1521","1.43","389.56","271.96"],
+["2026-03","DIGITAL EXCLUSIVO","-9","654","26","29","5692.22","0.0398","1.12","218.93","196.28"],
+["2026-03","OMNICANAL (HÍBRIDO)","-9","730","114","184","43637.98","0.1562","1.61","382.79","237.16"],
+["2026-03","DIGITAL EXCLUSIVO","-8","654","29","33","9944.38","0.0443","1.14","342.91","301.34"],
+["2026-03","OMNICANAL (HÍBRIDO)","-8","730","123","189","45165.79","0.1685","1.54","367.2","238.97"],
+["2026-03","DIGITAL EXCLUSIVO","-7","654","26","31","7729.66","0.0398","1.19","297.29","249.34"],
+["2026-03","OMNICANAL (HÍBRIDO)","-7","730","124","198","44165.23","0.1699","1.6","356.17","223.06"],
+["2026-03","DIGITAL EXCLUSIVO","-6","654","30","32","9844.13","0.0459","1.07","328.14","307.63"],
+["2026-03","OMNICANAL (HÍBRIDO)","-6","730","117","180","47142.59","0.1603","1.54","402.93","261.9"],
+["2026-03","DIGITAL EXCLUSIVO","-5","654","30","40","12693.74","0.0459","1.33","423.12","317.34"],
+["2026-03","OMNICANAL (HÍBRIDO)","-5","730","121","218","48271.45","0.1658","1.8","398.94","221.43"],
+["2026-03","DIGITAL EXCLUSIVO","-4","654","64","87","30452.51","0.0979","1.36","475.82","350.03"],
+["2026-03","OMNICANAL (HÍBRIDO)","-4","730","185","342","84869.59","0.2534","1.85","458.75","248.16"],
+["2026-03","DIGITAL EXCLUSIVO","-3","654","43","57","17468.28","0.0657","1.33","406.24","306.46"],
+["2026-03","OMNICANAL (HÍBRIDO)","-3","730","159","287","57937.56","0.2178","1.81","364.39","201.87"],
+["2026-03","DIGITAL EXCLUSIVO","-2","654","50","59","15427.48","0.0765","1.18","308.55","261.48"],
+["2026-03","OMNICANAL (HÍBRIDO)","-2","730","162","246","62432.95","0.2219","1.52","385.39","253.79"],
+["2026-03","DIGITAL EXCLUSIVO","-1","654","71","97","35376.58","0.1086","1.37","498.26","364.71"],
+["2026-03","OMNICANAL (HÍBRIDO)","-1","730","163","291","61702.82","0.2233","1.79","378.54","212.04"],
+["2026-03","DIGITAL EXCLUSIVO","0","654","644","833","186699.72","0.9847","1.29","289.91","224.13"],
+["2026-03","OMNICANAL (HÍBRIDO)","0","730","722","1315","288488.38","0.989","1.82","399.57","219.38"],
+["2026-03","DIGITAL EXCLUSIVO","1","654","92","125","28036.66","0.1407","1.36","304.75","224.29"],
+["2026-03","OMNICANAL (HÍBRIDO)","1","730","223","396","81099.68","0.3055","1.78","363.68","204.8"],
+["2026-03","DIGITAL EXCLUSIVO","2","654","89","122","23481.3","0.1361","1.37","263.83","192.47"],
+["2026-03","OMNICANAL (HÍBRIDO)","2","730","219","385","74372.27","0.3","1.76","339.6","193.17"],
+["2026-03","DIGITAL EXCLUSIVO","3","654","89","115","24878.92","0.1361","1.29","279.54","216.34"],
+["2026-03","OMNICANAL (HÍBRIDO)","3","730","184","342","52173.97","0.2521","1.86","283.55","152.56"],
+["2026-04","DIGITAL EXCLUSIVO","-12","640","25","34","7460.52","0.0391","1.36","298.42","219.43"],
+["2026-04","OMNICANAL (HÍBRIDO)","-12","746","99","166","31191.03","0.1327","1.68","315.06","187.9"],
+["2026-04","DIGITAL EXCLUSIVO","-11","640","21","27","4631.44","0.0328","1.29","220.54","171.53"],
+["2026-04","OMNICANAL (HÍBRIDO)","-11","746","118","172","40598.7","0.1582","1.46","344.06","236.04"],
+["2026-04","DIGITAL EXCLUSIVO","-10","640","31","33","9274.33","0.0484","1.06","299.17","281.04"],
+["2026-04","OMNICANAL (HÍBRIDO)","-10","746","116","219","40773.75","0.1555","1.89","351.5","186.18"],
+["2026-04","DIGITAL EXCLUSIVO","-9","640","24","30","7346.61","0.0375","1.25","306.11","244.89"],
+["2026-04","OMNICANAL (HÍBRIDO)","-9","746","118","184","36539.27","0.1582","1.56","309.65","198.58"],
+["2026-04","DIGITAL EXCLUSIVO","-8","640","31","34","9899.16","0.0484","1.1","319.33","291.15"],
+["2026-04","OMNICANAL (HÍBRIDO)","-8","746","127","212","46518.44","0.1702","1.67","366.29","219.43"],
+["2026-04","DIGITAL EXCLUSIVO","-7","640","31","37","8900.46","0.0484","1.19","287.11","240.55"],
+["2026-04","OMNICANAL (HÍBRIDO)","-7","746","98","157","32303.14","0.1314","1.6","329.62","205.75"],
+["2026-04","DIGITAL EXCLUSIVO","-6","640","27","32","10046.16","0.0422","1.19","372.08","313.94"],
+["2026-04","OMNICANAL (HÍBRIDO)","-6","746","122","200","44717.78","0.1635","1.64","366.54","223.59"],
+["2026-04","DIGITAL EXCLUSIVO","-5","640","47","57","18432.94","0.0734","1.21","392.19","323.38"],
+["2026-04","OMNICANAL (HÍBRIDO)","-5","746","167","270","63186.96","0.2239","1.62","378.37","234.03"],
+["2026-04","DIGITAL EXCLUSIVO","-4","640","32","49","7995.75","0.05","1.53","249.87","163.18"],
+["2026-04","OMNICANAL (HÍBRIDO)","-4","746","170","270","62944.25","0.2279","1.59","370.26","233.13"],
+["2026-04","DIGITAL EXCLUSIVO","-3","640","39","47","13577.58","0.0609","1.21","348.14","288.88"],
+["2026-04","OMNICANAL (HÍBRIDO)","-3","746","131","221","45745.89","0.1756","1.69","349.21","206.99"],
+["2026-04","DIGITAL EXCLUSIVO","-2","640","34","43","13959.58","0.0531","1.26","410.58","324.64"],
+["2026-04","OMNICANAL (HÍBRIDO)","-2","746","139","206","48342.43","0.1863","1.48","347.79","234.67"],
+["2026-04","DIGITAL EXCLUSIVO","-1","640","66","82","24949.62","0.1031","1.24","378.02","304.26"],
+["2026-04","OMNICANAL (HÍBRIDO)","-1","746","173","323","87971.84","0.2319","1.87","508.51","272.36"],
+["2026-04","DIGITAL EXCLUSIVO","0","640","623","761","181672.27","0.9734","1.22","291.61","238.73"],
+["2026-04","OMNICANAL (HÍBRIDO)","0","746","731","1348","293548.15","0.9799","1.84","401.57","217.77"],
+["2026-04","DIGITAL EXCLUSIVO","1","640","83","105","20128.34","0.1297","1.27","242.51","191.7"],
+["2026-04","OMNICANAL (HÍBRIDO)","1","746","240","434","93681.07","0.3217","1.81","390.34","215.86"],
+["2026-04","DIGITAL EXCLUSIVO","2","640","64","78","12049.67","0.1","1.22","188.28","154.48"],
+["2026-04","OMNICANAL (HÍBRIDO)","2","746","185","336","67759.74","0.248","1.82","366.27","201.67"],
+["2026-05","DIGITAL EXCLUSIVO","-12","562","22","26","8190.98","0.0391","1.18","372.32","315.04"],
+["2026-05","OMNICANAL (HÍBRIDO)","-12","649","107","162","41742.93","0.1649","1.51","390.12","257.67"],
+["2026-05","DIGITAL EXCLUSIVO","-11","562","21","25","6148.72","0.0374","1.19","292.8","245.95"],
+["2026-05","OMNICANAL (HÍBRIDO)","-11","649","101","144","34575.22","0.1556","1.43","342.33","240.11"],
+["2026-05","DIGITAL EXCLUSIVO","-10","562","24","27","11524.67","0.0427","1.13","480.19","426.84"],
+["2026-05","OMNICANAL (HÍBRIDO)","-10","649","104","170","36575.08","0.1602","1.63","351.68","215.15"],
+["2026-05","DIGITAL EXCLUSIVO","-9","562","26","31","9182.01","0.0463","1.19","353.15","296.19"],
+["2026-05","OMNICANAL (HÍBRIDO)","-9","649","100","161","37720.8","0.1541","1.61","377.21","234.29"],
+["2026-05","DIGITAL EXCLUSIVO","-8","562","25","30","8181.39","0.0445","1.2","327.26","272.71"],
+["2026-05","OMNICANAL (HÍBRIDO)","-8","649","95","159","29730.3","0.1464","1.67","312.95","186.98"],
+["2026-05","DIGITAL EXCLUSIVO","-7","562","24","36","9611.03","0.0427","1.5","400.46","266.97"],
+["2026-05","OMNICANAL (HÍBRIDO)","-7","649","99","159","43593.68","0.1525","1.61","440.34","274.17"],
+["2026-05","DIGITAL EXCLUSIVO","-6","562","41","64","25240.7","0.073","1.56","615.63","394.39"],
+["2026-05","OMNICANAL (HÍBRIDO)","-6","649","142","225","57308.29","0.2188","1.58","403.58","254.7"],
+["2026-05","DIGITAL EXCLUSIVO","-5","562","32","43","14649.31","0.0569","1.34","457.79","340.68"],
+["2026-05","OMNICANAL (HÍBRIDO)","-5","649","146","226","53426.34","0.225","1.55","365.93","236.4"],
+["2026-05","DIGITAL EXCLUSIVO","-4","562","36","46","12280.61","0.0641","1.28","341.13","266.97"],
+["2026-05","OMNICANAL (HÍBRIDO)","-4","649","129","205","49196.02","0.1988","1.59","381.36","239.98"],
+["2026-05","DIGITAL EXCLUSIVO","-3","562","53","76","23191.5","0.0943","1.43","437.58","305.15"],
+["2026-05","OMNICANAL (HÍBRIDO)","-3","649","113","185","59334.07","0.1741","1.64","525.08","320.72"],
+["2026-05","DIGITAL EXCLUSIVO","-2","562","53","86","26577.24","0.0943","1.62","501.46","309.04"],
+["2026-05","OMNICANAL (HÍBRIDO)","-2","649","173","306","71026.29","0.2666","1.77","410.56","232.11"],
+["2026-05","DIGITAL EXCLUSIVO","-1","562","61","93","37590.45","0.1085","1.52","616.24","404.2"],
+["2026-05","OMNICANAL (HÍBRIDO)","-1","649","180","297","105410.29","0.2773","1.65","585.61","354.92"],
+["2026-05","DIGITAL EXCLUSIVO","0","562","547","655","170361.49","0.9733","1.2","311.45","260.09"],
+["2026-05","OMNICANAL (HÍBRIDO)","0","649","644","1193","273170.13","0.9923","1.85","424.18","228.98"],
+["2026-05","DIGITAL EXCLUSIVO","1","562","82","113","17340.29","0.1459","1.38","211.47","153.45"],
+["2026-05","OMNICANAL (HÍBRIDO)","1","649","203","366","56089.02","0.3128","1.8","276.3","153.25"],
+["2026-06","DIGITAL EXCLUSIVO","-12","500","24","26","4832.85","0.048","1.08","201.37","185.88"],
+["2026-06","OMNICANAL (HÍBRIDO)","-12","514","81","120","34674","0.1576","1.48","428.07","288.95"],
+["2026-06","DIGITAL EXCLUSIVO","-11","500","22","33","9812.05","0.044","1.5","446","297.33"],
+["2026-06","OMNICANAL (HÍBRIDO)","-11","514","82","125","23411.61","0.1595","1.52","285.51","187.29"],
+["2026-06","DIGITAL EXCLUSIVO","-10","500","17","19","2984.94","0.034","1.12","175.58","157.1"],
+["2026-06","OMNICANAL (HÍBRIDO)","-10","514","84","127","37761.79","0.1634","1.51","449.55","297.34"],
+["2026-06","DIGITAL EXCLUSIVO","-9","500","16","18","4003.29","0.032","1.13","222.41","222.41"],
+["2026-06","OMNICANAL (HÍBRIDO)","-9","514","72","102","32954.69","0.1401","1.42","457.7","323.09"],
+["2026-06","DIGITAL EXCLUSIVO","-8","500","24","28","10748.54","0.048","1.17","447.86","383.88"],
+["2026-06","OMNICANAL (HÍBRIDO)","-8","514","76","102","30593.25","0.1479","1.34","402.54","299.93"],
+["2026-06","DIGITAL EXCLUSIVO","-7","500","37","47","17122.89","0.074","1.27","462.78","364.32"],
+["2026-06","OMNICANAL (HÍBRIDO)","-7","514","106","171","43170.88","0.2062","1.61","407.27","252.46"],
+["2026-06","DIGITAL EXCLUSIVO","-6","500","41","50","14247.14","0.082","1.22","347.49","284.94"],
+["2026-06","OMNICANAL (HÍBRIDO)","-6","514","115","199","43923.42","0.2237","1.73","381.94","220.72"],
+["2026-06","DIGITAL EXCLUSIVO","-5","500","26","33","11715.2","0.052","1.27","450.58","355.01"],
+["2026-06","OMNICANAL (HÍBRIDO)","-5","514","104","179","47761.28","0.2023","1.72","459.24","266.82"],
+["2026-06","DIGITAL EXCLUSIVO","-4","500","39","47","12541.42","0.078","1.21","321.57","266.84"],
+["2026-06","OMNICANAL (HÍBRIDO)","-4","514","100","146","38471.52","0.1946","1.46","384.72","263.5"],
+["2026-06","DIGITAL EXCLUSIVO","-3","500","47","61","14183.81","0.094","1.3","301.78","232.52"],
+["2026-06","OMNICANAL (HÍBRIDO)","-3","514","117","185","60219.12","0.2276","1.58","514.69","325.51"],
+["2026-06","DIGITAL EXCLUSIVO","-2","500","49","59","28445.58","0.098","1.2","580.52","482.13"],
+["2026-06","OMNICANAL (HÍBRIDO)","-2","514","128","225","55269.52","0.249","1.76","431.79","245.64"],
+["2026-06","DIGITAL EXCLUSIVO","-1","500","56","74","25312.29","0.112","1.32","452.01","342.06"],
+["2026-06","OMNICANAL (HÍBRIDO)","-1","514","134","254","72038.67","0.2607","1.9","537.6","283.62"],
+["2026-06","DIGITAL EXCLUSIVO","0","500","491","590","139563.45","0.982","1.2","284.24","236.55"],
+["2026-06","OMNICANAL (HÍBRIDO)","0","514","504","882","199140.29","0.9805","1.75","395.12","225.78"]
+];
+
+var dataB = {};
+function ensureB(safra,perfil,mes){
+  if(!dataB[safra]) dataB[safra]={};
+  if(!dataB[safra][perfil]) dataB[safra][perfil]={};
+  if(!dataB[safra][perfil][mes]) dataB[safra][perfil][mes]={};
+  return dataB[safra][perfil][mes];
+}
+for (var k=0;k<rowsB.length;k++){
+  var rb = rowsB[k];
+  var recb = ensureB(rb[0], rb[1], parseInt(rb[2],10));
+  recb.total_safra = parseFloat(rb[3]);
+  recb.pedidos = parseFloat(rb[5]);
+  recb.receita = parseFloat(rb[6]);
+  recb.retencao = parseFloat(rb[7])*100;
+  recb.frequencia = parseFloat(rb[8]);
+  recb.spending = parseFloat(rb[9]);
+  recb.ticket = parseFloat(rb[10]);
+}
+
+var cohortSafras = Object.keys(dataB).sort();
+var cohortMeses = [];
+for(var m=-9;m<=9;m++) cohortMeses.push(m);
+
+var COHORT_EXCLUDE_M0 = { retencao:true, frequencia:false, receita:true, spending:true, ticket:true };
+var COHORT_SCHEME = { retencao:'ryg', frequencia:'yg', receita:'ryg', spending:'ryg', ticket:'ryg' };
+
+function lerp(h1,h2,tt){
+  var c1=[parseInt(h1.slice(1,3),16),parseInt(h1.slice(3,5),16),parseInt(h1.slice(5,7),16)];
+  var c2=[parseInt(h2.slice(1,3),16),parseInt(h2.slice(3,5),16),parseInt(h2.slice(5,7),16)];
+  var r=[Math.round(c1[0]+(c2[0]-c1[0])*tt),Math.round(c1[1]+(c2[1]-c1[1])*tt),Math.round(c1[2]+(c2[2]-c1[2])*tt)];
+  return 'rgb('+r[0]+','+r[1]+','+r[2]+')';
+}
+var RED='#A32D2D', YELLOW='#C99A2E', GREEN='#2F7D45';
+function colorFor(scheme, t){
+  if(scheme==='ryg'){ if(t<=0.5) return lerp(RED,YELLOW,t/0.5); return lerp(YELLOW,GREEN,(t-0.5)/0.5); }
+  return lerp(YELLOW,GREEN,t);
+}
+function legendGradient(scheme){
+  if(scheme==='ryg') return 'linear-gradient(to right,'+RED+','+YELLOW+','+GREEN+')';
+  return 'linear-gradient(to right,'+YELLOW+','+GREEN+')';
+}
+function fmtCohort(metric,v){
+  if(metric==='retencao') return Math.round(v)+'%';
+  if(metric==='frequencia') return v.toFixed(1);
+  if(metric==='receita') return v>=1000 ? (v/1000).toFixed(1)+'k' : Math.round(v).toString();
+  if(metric==='spending') return Math.round(v).toString();
+  if(metric==='ticket') return Math.round(v).toString();
+  return String(v);
+}
+function fmtCohortLegend(metric,v){
+  if(metric==='retencao') return Math.round(v)+'%';
+  if(metric==='frequencia') return v.toFixed(2);
+  if(metric==='receita') return 'R$ '+Math.round(v).toLocaleString('pt-BR');
+  if(metric==='spending') return 'R$ '+Math.round(v);
+  if(metric==='ticket') return 'R$ '+Math.round(v);
+  return String(v);
+}
+function fmtAnalysis(metric,v){
+  if(metric==='retencao') return v.toFixed(1)+'%';
+  if(metric==='frequencia') return v.toFixed(2)+' pedidos/usuário';
+  if(metric==='receita') return 'R$ '+v.toLocaleString('pt-BR',{maximumFractionDigits:0});
+  if(metric==='spending') return 'R$ '+v.toFixed(2)+'/usuário';
+  if(metric==='ticket') return 'R$ '+v.toFixed(2);
+  return String(v);
+}
+var metricLabel = { retencao:'retenção', frequencia:'frequência de compra', receita:'receita', spending:'spending', ticket:'ticket médio' };
+var cohortSubtitles = {
+  retencao: '% de usuarios da safra que compraram no mes (M0 fora da escala)',
+  frequencia: 'pedidos medios por usuario ativo no mes',
+  receita: 'receita total do mes (M0 fora da escala)',
+  spending: 'receita media por usuario ativo no mes (M0 fora da escala)',
+  ticket: 'ticket medio do mes (M0 fora da escala)'
+};
+
+function avg(arr){ return arr.length ? arr.reduce(function(a,b){return a+b;},0)/arr.length : null; }
+
+function renderCohort(){
+  var metric = document.getElementById('cohort-metrica').value;
+  var scheme = COHORT_SCHEME[metric];
+  var perfil = document.getElementById('cohort-perfil').value;
+
+  document.getElementById('cohort-subtitle').textContent = cohortSubtitles[metric];
+  document.getElementById('cohort-legend-bar').style.background = legendGradient(scheme);
+
+  var grid = document.getElementById('cohort-grid');
+  var vmin=Infinity, vmax=-Infinity;
+  for(var si=0; si<cohortSafras.length; si++){
+    for(var mi=0; mi<cohortMeses.length; mi++){
+      var m = cohortMeses[mi];
+      if(COHORT_EXCLUDE_M0[metric] && m===0) continue;
+      var rec = dataB[cohortSafras[si]] && dataB[cohortSafras[si]][perfil] && dataB[cohortSafras[si]][perfil][m];
+      if(rec && rec[metric]!==undefined){ var v=rec[metric]; if(v<vmin) vmin=v; if(v>vmax) vmax=v; }
+    }
+  }
+  if(vmin===Infinity){ vmin=0; vmax=1; }
+  document.getElementById('cohort-legend-min').textContent = (scheme==='yg' ? 'pior ' : 'baixo ') + fmtCohortLegend(metric,vmin);
+  document.getElementById('cohort-legend-max').textContent = (scheme==='yg' ? 'melhor ' : 'alto ') + fmtCohortLegend(metric,vmax);
+
+  grid.innerHTML='';
+  grid.style.display='grid';
+  var cols = '96px';
+  for(var ci=0; ci<cohortMeses.length; ci++) cols += ' 34px';
+  grid.style.gridTemplateColumns = cols;
+  grid.style.gap='2px';
+
+  grid.appendChild(document.createElement('div'));
+  for(var hi=0; hi<cohortMeses.length; hi++){
+    var m2 = cohortMeses[hi];
+    var h = document.createElement('div');
+    h.textContent = m2===0 ? 'M0' : (m2>0?('+'+m2):String(m2));
+    h.style.fontSize='11px';
+    h.style.color='var(--text-muted)';
+    h.style.textAlign='center';
+    h.style.fontWeight = m2===0 ? '600':'400';
+    grid.appendChild(h);
+  }
+
+  for(var si2=0; si2<cohortSafras.length; si2++){
+    var safra2 = cohortSafras[si2];
+    var label = document.createElement('div');
+    label.style.display='flex';
+    label.style.flexDirection='column';
+    label.style.justifyContent='center';
+    var t1=document.createElement('div');
+    t1.textContent=safra2;
+    t1.style.fontSize='12px';
+    t1.style.color='var(--text-secondary)';
+    var perfilData = (dataB[safra2] && dataB[safra2][perfil]) || {};
+    var keys = Object.keys(perfilData);
+    var t2=document.createElement('div');
+    var totalSafra = keys.length ? perfilData[keys[0]].total_safra : null;
+    t2.textContent = totalSafra ? (totalSafra+' usuarios') : '';
+    t2.style.fontSize='10px';
+    t2.style.color='var(--text-muted)';
+    label.appendChild(t1);
+    label.appendChild(t2);
+    grid.appendChild(label);
+
+    for(var mi2=0; mi2<cohortMeses.length; mi2++){
+      var m3 = cohortMeses[mi2];
+      var cell = document.createElement('div');
+      cell.style.height='30px';
+      cell.style.borderRadius='4px';
+      cell.style.display='flex';
+      cell.style.alignItems='center';
+      cell.style.justifyContent='center';
+      cell.style.fontSize='11px';
+      if(m3===0){ cell.style.outline='1px solid var(--border-strong)'; }
+
+      var rec3 = perfilData[m3];
+      var v2 = rec3 && rec3[metric]!==undefined ? rec3[metric] : null;
+
+      if(v2===null){
+        cell.style.background='var(--surface-1)';
+      } else if(m3===0 && COHORT_EXCLUDE_M0[metric]){
+        cell.style.background='var(--surface-1)';
+        cell.style.color='var(--text-muted)';
+        cell.textContent = fmtCohort(metric, v2);
+        cell.title = safra2+' | M0 (referencia, fora da escala) | '+perfil+' | '+metric+': '+v2;
+      } else {
+        var t3 = vmax>vmin ? (v2-vmin)/(vmax-vmin) : 0.5;
+        cell.style.background = colorFor(scheme, t3);
+        cell.style.color = (t3<0.35 || t3>0.75) ? '#fff' : '#2C2C2A';
+        cell.textContent = fmtCohort(metric, v2);
+        cell.title = safra2+' | mes '+m3+' | '+perfil+' | '+metric+': '+v2;
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  updateCohortAnalysis(metric, perfil);
+}
+
+function updateCohortAnalysis(metric, perfil){
+  var perMonthPre = {}, perMonthPos = {}, m0Vals = [];
+  for(var si=0; si<cohortSafras.length; si++){
+    var pd = dataB[cohortSafras[si]] && dataB[cohortSafras[si]][perfil];
+    if(!pd) continue;
+    for(var mi=0; mi<cohortMeses.length; mi++){
+      var m = cohortMeses[mi];
+      var rec = pd[m];
+      if(!rec || rec[metric]===undefined) continue;
+      var v = rec[metric];
+      if(m===0){ m0Vals.push(v); }
+      else if(m<0){ perMonthPre[m] = (perMonthPre[m]||[]).concat([v]); }
+      else { perMonthPos[m] = (perMonthPos[m]||[]).concat([v]); }
+    }
+  }
+
+  function series(perMonthObj, monthsArr){
+    return monthsArr.map(function(m){ return {m:m, v: perMonthObj[m]!==undefined ? avg(perMonthObj[m]) : null}; }).filter(function(x){ return x.v!==null; });
+  }
+  var preSeries = series(perMonthPre, [-9,-8,-7,-6,-5,-4,-3,-2,-1]);
+  var posSeries = series(perMonthPos, [1,2,3,4,5,6,7,8,9]);
+
+  var preVals = preSeries.map(function(x){return x.v;});
+  var posVals = posSeries.map(function(x){return x.v;});
+  var preAvg = avg(preVals), posAvg = avg(posVals), m0Avg = avg(m0Vals);
+  var delta = (preAvg && posAvg!==null) ? ((posAvg-preAvg)/preAvg*100) : null;
+  var deltaTxt = delta===null ? 'sem dados suficientes' : (delta>=0 ? '+'+delta.toFixed(1)+'%' : delta.toFixed(1)+'%');
+  var direcao = delta===null ? '' : (delta>0 ? 'aumento' : (delta<0 ? 'queda' : 'estabilidade'));
+
+  function blockAvg(seriesArr, range){
+    var vals = seriesArr.filter(function(x){ return range.indexOf(x.m)>=0; }).map(function(x){ return x.v; });
+    return avg(vals);
+  }
+  var b1 = blockAvg(posSeries, [1,2,3]);
+  var b2 = blockAvg(posSeries, [4,5,6]);
+  var b3 = blockAvg(posSeries, [7,8,9]);
+  function vsBase(v){ return (v!==null && preAvg) ? ((v-preAvg)/preAvg*100) : null; }
+  var b1pct = vsBase(b1), b2pct = vsBase(b2), b3pct = vsBase(b3);
+
+  var maxRise = null, maxDrop = null;
+  for(var i=1;i<posSeries.length;i++){
+    var prevV = posSeries[i-1].v, curV = posSeries[i].v;
+    if(prevV===0) continue;
+    var pct = (curV-prevV)/prevV*100;
+    if(maxRise===null || pct>maxRise.pct) maxRise = {from:posSeries[i-1].m, to:posSeries[i].m, pct:pct, fromV:prevV, toV:curV};
+    if(maxDrop===null || pct<maxDrop.pct) maxDrop = {from:posSeries[i-1].m, to:posSeries[i].m, pct:pct, fromV:prevV, toV:curV};
+  }
+
+  function peakOf(seriesArr){ var best=null; seriesArr.forEach(function(x){ if(best===null||x.v>best.v) best=x; }); return best; }
+  function troughOf(seriesArr){ var worst=null; seriesArr.forEach(function(x){ if(worst===null||x.v<worst.v) worst=x; }); return worst; }
+  var peakPos = peakOf(posSeries), troughPos = troughOf(posSeries);
+  var preTrendPct = (preSeries.length>=2) ? ((preSeries[preSeries.length-1].v - preSeries[0].v)/preSeries[0].v*100) : null;
+
+  var perfilLabel = perfil==='DIGITAL EXCLUSIVO' ? 'usuários digital exclusivo' : 'usuários omnicanal (híbrido)';
+  var mLabel = metricLabel[metric];
+
+  var html = '';
+  html += '<strong>Perfil analisado: '+perfilLabel+' — métrica: '+mLabel+'</strong><br/><br/>';
+
+  html += '<u>Resumo</u><br/>';
+  html += '&bull; Pré-saldo (média -9 a -1): <strong>'+(preAvg!==null?fmtAnalysis(metric,preAvg):'—')+'</strong> &nbsp;|&nbsp; Pós-saldo (média +1 a +9): <strong>'+(posAvg!==null?fmtAnalysis(metric,posAvg):'—')+'</strong> &nbsp;|&nbsp; Variação: <strong>'+deltaTxt+'</strong><br/>';
+  if(m0Avg!==null){ html += '&bull; M0 (ativação, fora da comparação): '+fmtAnalysis(metric,m0Avg)+'<br/>'; }
+
+  html += '<br/><u>O efeito do saldo persiste ou desaparece com o tempo?</u><br/>';
+  if(b1!==null){ html += '&bull; Curto prazo (+1 a +3): '+fmtAnalysis(metric,b1)+' — '+(b1pct>=0?'+':'')+b1pct.toFixed(1)+'% vs. patamar pré-saldo.<br/>'; }
+  if(b2!==null){ html += '&bull; Médio prazo (+4 a +6): '+fmtAnalysis(metric,b2)+' — '+(b2pct>=0?'+':'')+b2pct.toFixed(1)+'% vs. patamar pré-saldo.<br/>'; }
+  if(b3!==null){ html += '&bull; Longo prazo (+7 a +9): '+fmtAnalysis(metric,b3)+' — '+(b3pct>=0?'+':'')+b3pct.toFixed(1)+'% vs. patamar pré-saldo.<br/>'; }
+  if(b1pct!==null && b2pct!==null && b3pct!==null){
+    var actionMap = {
+      retencao: 'ações de reengajamento e alertas de pré-churn direcionados a partir desse ponto',
+      frequencia: 'campanhas de reativação para sustentar a cadência de compra a partir desse ponto',
+      receita: 'campanhas de cross-sell/upsell para sustentar a receita a partir desse ponto',
+      spending: 'campanhas de upsell ou valor mínimo de cesta para elevar o gasto médio a partir desse ponto',
+      ticket: 'campanhas de upsell ou valor mínimo de cesta para proteger o ticket médio a partir desse ponto'
+    };
+    var action = actionMap[metric];
+    var crossMonth = null;
+    for(var ci=0; ci<posSeries.length; ci++){
+      if(posSeries[ci].v < preAvg){ crossMonth = posSeries[ci].m; break; }
+    }
+    var objetivo;
+    if(b1pct>0 && b3pct<=0){
+      objetivo = 'a mecânica se mostra eficiente para elevar '+mLabel+' principalmente no curto prazo (+1 a +3, '+(b1pct>=0?'+':'')+b1pct.toFixed(1)+'%), porém não é suficiente para se sustentar ao longo de todo o período pós-saldo';
+      if(crossMonth!==null){ objetivo += ' — existe queda de volta ao patamar pré-saldo a partir de <strong>+'+crossMonth+'</strong>'; }
+      objetivo += ', indicando potencial para '+action+'.';
+    } else if(b1pct>0 && b2pct>0 && b3pct>0){
+      objetivo = 'a mecânica eleva '+mLabel+' de forma sustentada em toda a janela observada (curto, médio e longo prazo permanecem acima do patamar pré-saldo, terminando em '+(b3pct>=0?'+':'')+b3pct.toFixed(1)+'%) — não é apenas um pico de ativação, é um ganho estrutural que não exige reforço adicional imediato.';
+    } else if(b1pct<=0){
+      objetivo = 'a mecânica não gera ganho relevante de '+mLabel+' nem no curto prazo — o patamar pós-saldo já nasce igual ou abaixo do pré-saldo neste recorte, sugerindo que '+action+' tendem a ser mais eficazes que o próprio saldo para mover essa métrica.';
+    } else {
+      objetivo = mLabel+' oscila entre as janelas pós-saldo sem uma tendência clara de sustentação ou dissipação — recomenda-se acompanhar de perto antes de agir, considerando '+action+' como hipótese de reforço caso a oscilação se confirme queda.';
+    }
+    html += '&bull; <strong>Leitura objetiva:</strong> '+objetivo+'<br/>';
+  }
+
+  html += '<br/><u>Picos e variações mês a mês (janela pós-saldo)</u><br/>';
+  if(peakPos){ html += '&bull; Maior valor pós-saldo: <strong>+'+peakPos.m+'</strong> ('+fmtAnalysis(metric,peakPos.v)+').<br/>'; }
+  if(troughPos){ html += '&bull; Menor valor pós-saldo: <strong>+'+troughPos.m+'</strong> ('+fmtAnalysis(metric,troughPos.v)+').<br/>'; }
+  if(maxRise && maxRise.pct>0){ html += '&bull; Maior alta mês a mês: de <strong>+'+maxRise.from+'</strong> para <strong>+'+maxRise.to+'</strong>, subindo '+maxRise.pct.toFixed(1)+'% ('+fmtAnalysis(metric,maxRise.fromV)+' → '+fmtAnalysis(metric,maxRise.toV)+').<br/>'; }
+  if(maxDrop && maxDrop.pct<0){ html += '&bull; Maior queda mês a mês: de <strong>+'+maxDrop.from+'</strong> para <strong>+'+maxDrop.to+'</strong>, caindo '+Math.abs(maxDrop.pct).toFixed(1)+'% ('+fmtAnalysis(metric,maxDrop.fromV)+' → '+fmtAnalysis(metric,maxDrop.toV)+').<br/>'; }
+
+  html += '<br/><u>Comportamento pré-saldo (aproximação do M0)</u><br/>';
+  if(preTrendPct!==null){
+    var preDir = preTrendPct>0 ? 'sobe' : (preTrendPct<0 ? 'cai' : 'fica estável');
+    html += '&bull; De -9 até -1, '+mLabel+' '+preDir+' '+Math.abs(preTrendPct).toFixed(1)+'%, sugerindo que o usuário '+(preTrendPct>0?'já vinha aumentando o engajamento antes de decidir usar o saldo':'não mostra sinal de aquecimento prévio ao uso do saldo')+'.<br/>';
+  }
+
+  html += '<br/><span style="color:var(--text-muted); font-size:12px;">Cálculo: médias simples entre todas as safras (2025-06 a 2026-06) por mês relativo. Blocos de curto/médio/longo prazo comparam a média de cada janela pós-saldo contra a média pré-saldo (-9 a -1). M0 é excluído por ser o próprio evento de ativação.</span>';
+
+  document.getElementById('cohort-analysis').innerHTML = html;
+}
+
+document.getElementById('cohort-metrica').addEventListener('change', renderCohort);
+document.getElementById('cohort-perfil').addEventListener('change', renderCohort);
+renderCohort();
+
+/* ===================== SECTION 2: EVOLUCAO MOM SALDO ===================== */
+
+function brNum(s){ return parseFloat(String(s).replace(/\./g,'').replace(',','.')); }
+function brPct(s){ return parseFloat(String(s).replace('%','').replace(',','.')); }
+
+var momRows = [
+["2025","01 - Janeiro","246.114","313.939","251.830","420.892","496.390","1.379.728","2.548.841","10,36","12,32%","9,66%"],
+["2025","02 - Fevereiro","154.833","273.953","264.434","422.322","524.976","1.432.301","2.644.033","17,08","10,36%","5,86%"],
+["2025","03 - Março","152.471","246.434","288.283","328.265","562.017","1.387.949","2.566.514","16,83","9,60%","5,94%"],
+["2025","04 - Abril","127.037","210.656","274.815","518.016","485.627","1.417.538","2.695.995","21,22","7,81%","4,71%"],
+["2025","05 - Maio","135.629","199.909","290.207","428.048","513.519","1.483.877","2.715.651","20,02","7,36%","4,99%"],
+["2025","06 - Junho","119.161","228.123","355.836","383.244","461.434","1.498.414","2.698.928","22,65","8,45%","4,42%"],
+["2025","07 - Julho","152.499","226.590","327.426","336.327","522.500","1.382.064","2.568.317","16,84","8,82%","5,94%"],
+["2025","08 - Agosto","181.716","225.760","367.732","584.115","479.281","1.247.084","2.678.213","14,74","8,43%","6,78%"],
+["2025","09 - Setembro","175.820","320.218","382.250","274.864","487.102","1.060.278","2.204.494","12,54","14,53%","7,98%"],
+["2025","10 - Outubro","243.734","339.741","433.439","328.048","559.612","960.921","2.282.021","9,36","14,89%","10,68%"],
+["2025","11 - Novembro","339.625","1.268.970","523.637","522.950","1.027.252","1.655.556","3.729.395","10,98","34,03%","9,11%"],
+["2025","12 - Dezembro","291.089","396.381","499.168","341.865","725.235","1.086.737","2.653.005","9,11","14,94%","10,97%"],
+["2026","01 - Janeiro","254.796","332.573","473.228","385.515","599.109","1.009.997","2.467.849","9,69","13,48%","10,32%"],
+["2026","02 - Fevereiro","237.125","298.662","472.885","229.579","557.106","1.002.932","2.262.502","9,54","13,20%","10,48%"],
+["2026","03 - Março","230.151","372.084","504.951","293.786","734.128","1.523.158","3.056.022","13,28","12,18%","7,53%"],
+["2026","04 - Abril","279.807","302.289","584.523","517.477","685.917","1.442.017","3.229.934","11,54","9,36%","8,66%"],
+["2026","05 - Maio","188.060","309.905","562.515","893.312","647.871","1.388.087","3.491.785","18,57","8,88%","5,39%"],
+["2026","06 - Junho","182.275","245.273","456.144","355.811","599.270","2.118.595","3.529.819","19,37","6,95%","5,16%"]
+];
+
+var momLabels = momRows.map(function(r){ return r[1].split(' - ')[1].slice(0,3)+'/'+r[0].slice(2); });
+var momEmitido = momRows.map(function(r){ return brNum(r[2]); });
+var momGasto = momRows.map(function(r){ return brNum(r[3]); });
+var momLastclick = momRows.map(function(r){ return brNum(r[4]); });
+var momCupom = momRows.map(function(r){ return brNum(r[5]); });
+var momValetroca = momRows.map(function(r){ return brNum(r[6]); });
+var momDias30 = momRows.map(function(r){ return brNum(r[7]); });
+var momAlavancagem = momRows.map(function(r){ return brNum(r[9]); });
+var momPctUso = momRows.map(function(r){ return brPct(r[10]); });
+var momPctResgate = momRows.map(function(r){ return brPct(r[11]); });
+
+new Chart(document.getElementById('mom-chart1'), {
+  type: 'line',
+  data: {
+    labels: momLabels,
+    datasets: [
+      { label: 'Emitido', data: momEmitido, borderColor: '#2a78d6', backgroundColor: 'rgba(42,120,214,0.1)', borderWidth: 2, pointRadius: 2, tension: 0.2 },
+      { label: 'Gasto', data: momGasto, borderColor: '#e34948', backgroundColor: 'rgba(227,73,72,0.1)', borderWidth: 2, pointRadius: 2, tension: 0.2, borderDash: [5,3] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label+': R$ '+Math.round(ctx.parsed.y).toLocaleString('pt-BR'); } } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { autoSkip: true, maxRotation: 45 } },
+      y: { grid: { color: '#e1e0d9' }, ticks: { callback: function(v){ return 'R$'+(v/1000).toFixed(0)+'k'; } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('mom-chart2'), {
+  type: 'line',
+  data: {
+    labels: momLabels,
+    datasets: [
+      { label: '% uso saldo / venda', data: momPctUso, borderColor: '#2a78d6', backgroundColor: 'rgba(42,120,214,0.1)', borderWidth: 2, pointRadius: 2, tension: 0.2 },
+      { label: '% resgate / venda', data: momPctResgate, borderColor: '#eda100', backgroundColor: 'rgba(237,161,0,0.1)', borderWidth: 2, pointRadius: 2, tension: 0.2, borderDash: [5,3] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'%'; } } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { autoSkip: true, maxRotation: 45 } },
+      y: { grid: { color: '#e1e0d9' }, ticks: { callback: function(v){ return v+'%'; } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('mom-chart3'), {
+  type: 'bar',
+  data: {
+    labels: momLabels,
+    datasets: [{ label: 'GMV por real emitido', data: momAlavancagem, backgroundColor: '#1baf7a', borderRadius: 4, maxBarThickness: 24 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx){ return 'R$ '+ctx.parsed.y.toFixed(2)+' de GMV por R$1 emitido'; } } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { autoSkip: true, maxRotation: 45 } },
+      y: { grid: { color: '#e1e0d9' }, ticks: { callback: function(v){ return 'R$'+v; } } }
+    }
+  }
+});
+
+/* ===================== SECTION 3: REPRESENTATIVIDADE POR TIER ===================== */
+
+var tiers = ['Top 10%','Top 25%','Top 50%','Top 75%','Top 90%','Bottom 10%'];
+var tierClientesUsam = [23.70, 14.06, 8.87, 6.24, 5.69, 9.11];
+var tierReceitaGerada = [26.30, 14.33, 9.14, 6.24, 5.70, 8.47];
+var tierIndice = tierReceitaGerada.map(function(r,i){ return +(r/tierClientesUsam[i]).toFixed(2); });
+
+new Chart(document.getElementById('tier-chart1'), {
+  data: {
+    labels: tiers,
+    datasets: [
+      { type: 'bar', label: '% clientes que usam saldo', data: tierClientesUsam, backgroundColor: '#2a78d6', borderRadius: 4, maxBarThickness: 26, yAxisID: 'y' },
+      { type: 'bar', label: '% receita gerada por eles', data: tierReceitaGerada, backgroundColor: '#1baf7a', borderRadius: 4, maxBarThickness: 26, yAxisID: 'y' },
+      { type: 'line', label: 'Índice', data: tierIndice, borderColor: '#e34948', backgroundColor: '#e34948', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#e34948', tension: 0.2, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: function(ctx){
+        if(ctx.dataset.yAxisID==='y1') return 'Índice: '+ctx.parsed.y.toFixed(2);
+        return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'%';
+      } } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', grid: { color: '#e1e0d9' }, ticks: { callback: function(v){ return v+'%'; } }, title: { display: true, text: '% representatividade', color: '#898781', font: { size: 11 } } },
+      y1: { position: 'right', grid: { display: false }, min: 0.85, max: 1.2, ticks: { callback: function(v){ return v.toFixed(2); } }, title: { display: true, text: 'Índice', color: '#898781', font: { size: 11 } } }
+    }
+  }
+});
+
+/* Valores absolutos agregados por tier (soma das 7 faixas de uso) */
+var tierSummary = [
+  { tier: 'Top 10%', qtd: 33151, receita: 96634899, saldo: 2358373, ltv: 2914.53 },
+  { tier: 'Top 25%', qtd: 49731, receita: 60904394, saldo: 999748, ltv: 1224.55 },
+  { tier: 'Top 50%', qtd: 82884, receita: 52924491, saldo: 832990, ltv: 638.66 },
+  { tier: 'Top 75%', qtd: 82882, receita: 26072279, saldo: 514240, ltv: 314.58 },
+  { tier: 'Top 90%', qtd: 49729, receita: 7404225, saldo: 212595, ltv: 148.94 },
+  { tier: 'Bottom 10%', qtd: 33154, receita: 1987179, saldo: 126604, ltv: 59.94 }
+];
+var tierSummaryBody = document.getElementById('tier-summary-table');
+tierSummary.forEach(function(row){
+  var tr = document.createElement('tr');
+  tr.style.borderBottom = '0.5px solid var(--border)';
+  tr.innerHTML =
+    '<td style="padding:8px 10px; font-weight:500;">'+row.tier+'</td>'+
+    '<td style="padding:8px 10px; text-align:right;">'+row.qtd.toLocaleString('pt-BR')+'</td>'+
+    '<td style="padding:8px 10px; text-align:right;">R$ '+Math.round(row.receita).toLocaleString('pt-BR')+'</td>'+
+    '<td style="padding:8px 10px; text-align:right;">R$ '+Math.round(row.saldo).toLocaleString('pt-BR')+'</td>'+
+    '<td style="padding:8px 10px; text-align:right;">R$ '+row.ltv.toFixed(2)+'</td>';
+  tierSummaryBody.appendChild(tr);
+});
+
+/* Detalhe por faixa de uso, para cada tier: qtd_clientes e ltv_medio */
+var tierFaixas = ['Nunca usou','Até 5%','5-10%','10-15%','15-20%','20-30%','Acima 30%'];
+var tierDetail = {
+  'Top 10%':   { qtd: [25294,4158,2003,834,394,284,184], ltv: [2816,3289,3279,3049,3091,2869,3240] },
+  'Top 25%':   { qtd: [42737,3189,1623,907,523,466,286], ltv: [1221,1256,1257,1245,1221,1224,1199] },
+  'Top 50%':   { qtd: [75529,2748,1669,950,610,688,690], ltv: [637,673,656,660,654,642,615] },
+  'Top 75%':   { qtd: [77709,1217,985,654,525,706,1086], ltv: [315,325,322,312,307,313,303] },
+  'Top 90%':   { qtd: [46897,337,307,291,271,498,1128], ltv: [149,156,156,156,150,145,145] },
+  'Bottom 10%':{ qtd: [30133,3,219,165,206,462,1966], ltv: [60,97,69,61,59,60,52] }
+};
+
+function faixaLabelsWithPct(sel){
+  var qtd = tierDetail[sel].qtd;
+  var total = qtd.reduce(function(a,b){return a+b;},0);
+  return tierFaixas.map(function(f,i){ return [f, '('+(qtd[i]/total*100).toFixed(1)+'%)']; });
+}
+
+var tierChart2 = new Chart(document.getElementById('tier-chart2'), {
+  data: {
+    labels: faixaLabelsWithPct('Top 10%'),
+    datasets: [
+      { type: 'bar', label: 'Qtd. clientes', data: tierDetail['Top 10%'].qtd, backgroundColor: '#2a78d6', borderRadius: 4, maxBarThickness: 40, yAxisID: 'y' },
+      { type: 'line', label: 'LTV médio', data: tierDetail['Top 10%'].ltv, borderColor: '#e34948', backgroundColor: '#e34948', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#e34948', tension: 0.2, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: function(ctx){
+        if(ctx.dataset.yAxisID==='y1') return 'LTV médio: R$ '+ctx.parsed.y.toLocaleString('pt-BR');
+        var total = ctx.dataset.data.reduce(function(a,b){return a+b;},0);
+        var pct = (ctx.parsed.y/total*100).toFixed(1);
+        return 'Qtd. clientes: '+ctx.parsed.y.toLocaleString('pt-BR')+' ('+pct+'% do tier)';
+      } } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', type: 'logarithmic', grid: { color: '#e1e0d9' }, ticks: { callback: function(v){ return v.toLocaleString('pt-BR'); } }, title: { display: true, text: 'Qtd. clientes (escala log)', color: '#898781', font: { size: 11 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: function(v){ return 'R$'+v; } }, title: { display: true, text: 'LTV médio (R$)', color: '#898781', font: { size: 11 } } }
+    }
+  }
+});
+
+var tierButtonsDiv = document.getElementById('tier-buttons');
+
+function updateTierChart2Analysis(sel){
+  var d = tierDetail[sel];
+  var neverLtv = d.ltv[0];
+  var usedLtv = d.ltv.slice(1);
+  var maxLtv = Math.max.apply(null, usedLtv);
+  var minLtv = Math.min.apply(null, usedLtv);
+  var maxFaixa = tierFaixas[d.ltv.indexOf(maxLtv)];
+  var minFaixa = tierFaixas[d.ltv.indexOf(minLtv)];
+  var avgUsedLtv = usedLtv.reduce(function(a,b){return a+b;},0)/usedLtv.length;
+  var vsNeverPct = ((neverLtv-avgUsedLtv)/avgUsedLtv*100).toFixed(1);
+  var totalQtd = d.qtd.reduce(function(a,b){return a+b;},0);
+  var pctNever = (d.qtd[0]/totalQtd*100).toFixed(1);
+  var direction = neverLtv > avgUsedLtv ? 'maior' : 'menor';
+  var html = '<strong>'+sel+':</strong> quem nunca usou saldo (LTV R$ '+neverLtv.toLocaleString('pt-BR')+', '+pctNever+'% da base) tem LTV '+direction+' que a média de quem usa saldo (R$ '+Math.round(avgUsedLtv).toLocaleString('pt-BR')+', variação de '+(vsNeverPct>=0?'+':'')+vsNeverPct+'%). ';
+  html += 'O maior LTV entre usuários de saldo está na faixa <strong>'+maxFaixa+'</strong> (R$ '+maxLtv.toLocaleString('pt-BR')+') e o menor na faixa <strong>'+minFaixa+'</strong> (R$ '+minLtv.toLocaleString('pt-BR')+').';
+  document.getElementById('tier-chart2-analysis').innerHTML = html;
+}
+updateTierChart2Analysis('Top 10%');
+
+Object.keys(tierDetail).forEach(function(t, idx){
+  var btn = document.createElement('button');
+  btn.textContent = t;
+  btn.dataset.tier = t;
+  if(idx===0){ btn.style.background = 'var(--fill-primary)'; btn.style.color = 'var(--on-primary)'; }
+  btn.addEventListener('click', function(){
+    var allBtns = tierButtonsDiv.querySelectorAll('button');
+    allBtns.forEach(function(b){ b.style.background = 'var(--surface-2)'; b.style.color = 'var(--text-primary)'; });
+    this.style.background = 'var(--fill-primary)';
+    this.style.color = 'var(--on-primary)';
+    var sel = this.dataset.tier;
+    tierChart2.data.labels = faixaLabelsWithPct(sel);
+    tierChart2.data.datasets[0].data = tierDetail[sel].qtd;
+    tierChart2.data.datasets[1].data = tierDetail[sel].ltv;
+    tierChart2.update();
+    updateTierChart2Analysis(sel);
+  });
+  tierButtonsDiv.appendChild(btn);
+});
+
+} catch(e) {
+  document.body.insertAdjacentHTML('beforeend', '<div style="color:red; padding:20px;">Erro: ' + e.message + '</div>');
+}
+</script>
+</body>
+</html>
